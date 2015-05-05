@@ -15,6 +15,19 @@ using namespace std;
 #ifndef __FILES_H_INCLUDED__
 #define __FILES_H_INCLUDED__
 
+struct SolverParameters{
+  fptype beta;
+};
+
+class SolverParametersReader{
+  public:
+    SolverParametersReader(string infilename);
+    SolverParameters get_parameters(){return p;};
+  private:
+    void read();
+    string infilename;
+    SolverParameters p;
+};
 
 #endif 
 
