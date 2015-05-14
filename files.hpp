@@ -17,6 +17,7 @@ using namespace std;
 
 struct SolverParameters{
   fptype beta;
+  int nsamples;
 };
 
 class SolverParametersReader{

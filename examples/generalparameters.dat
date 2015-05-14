@@ -1,2 +1,4 @@
 #beta in inverse electron volts
 40
+#number of MC samples in 1.5e7 notation
+1.5e7
