@@ -1,4 +1,10 @@
 #beta in inverse electron volts
 40
-#number of MC samples in 1.5e7 notation
+#K parameter that controls expansion order
+1
+#Hubbard U in eV
+2
+#warmup phase: number of MC samples in 1.5e7 notation
+1.0e4
+#measure phase: number of MC samples in 1.5e7 notation
 1.5e7

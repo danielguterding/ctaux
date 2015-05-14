@@ -16,8 +16,8 @@ using namespace std;
 #define __FILES_H_INCLUDED__
 
 struct SolverParameters{
-  fptype beta;
-  int nsamples;
+  fptype beta, K, U;
+  int nsampleswarmup, nsamplesmeasure;
 };
 
 class SolverParametersReader{

@@ -22,7 +22,19 @@ void SolverParametersReader::read(){
   
   getline(infilehandle, line); //read comment line and discard it
   getline(infilehandle, line);
-  this->p.nsamples = int(boost::lexical_cast<fptype>(line));
+  this->p.K = boost::lexical_cast<fptype>(line);
+  
+  getline(infilehandle, line); //read comment line and discard it
+  getline(infilehandle, line);
+  this->p.U = boost::lexical_cast<fptype>(line);
+  
+  getline(infilehandle, line); //read comment line and discard it
+  getline(infilehandle, line);
+  this->p.nsampleswarmup = int(boost::lexical_cast<fptype>(line));
+  
+  getline(infilehandle, line); //read comment line and discard it
+  getline(infilehandle, line);
+  this->p.nsamplesmeasure = int(boost::lexical_cast<fptype>(line));
 }
 
 string trim_all(const std::string &str){  //with a more recent version of boost boost::trim_all() can be used instead of this function
