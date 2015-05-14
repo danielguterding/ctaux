@@ -4,7 +4,7 @@
 1
 #Hubbard U in eV
 2
-#warmup phase: number of MC samples in 1.5e7 notation
+#warmup phase: number of MC samples, e.g. 1.0e4
 1.0e4
-#measure phase: number of MC samples in 1.5e7 notation
+#measure phase: number of MC samples, e.g. 1.5e7
 1.5e7
