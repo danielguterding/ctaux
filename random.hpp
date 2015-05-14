@@ -1,6 +1,5 @@
 //random.hpp
 #include <random>
-#include <vector>
 #include "typedefs.hpp"
 
 using namespace std;
