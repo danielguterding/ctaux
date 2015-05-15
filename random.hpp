@@ -1,14 +1,12 @@
 //random.hpp
 #include <random>
+
 #include "typedefs.hpp"
 
 using namespace std;
 
-// class RandomNumberGenerator{
-//   public:
-//     RandomNumberGenerator(const int key){}; //save an identifier that is used to initialize the RNG, e.g. node rank
-//     virtual fptype get_value(){return 0;}; //this function returns a floating point value between 0 and 1
-// };
+#ifndef __RANDOM_H_INCLUDED__
+#define __RANDOM_H_INCLUDED__
 
 class RNG_StdMersenne{
   //Mersenne Twister from the C++ standard library
@@ -21,3 +19,5 @@ class RNG_StdMersenne{
     std::mt19937 *rng_ptr;
     std::uniform_real_distribution<fptype> *dist_ptr;
 };
+
+#endif
