@@ -29,7 +29,7 @@ def transform_gf(matsubarafreq, gf, ntau):
   for i,t in enumerate(tau):
     newgf[i] = 2.0/beta*np.sum(np.real(gf)*np.cos(t*matsubarafreq) + (np.imag(gf) + np.power(matsubarafreq, -1))*np.sin(t*matsubarafreq)) - 0.5
 
-  return tau, newgf
+  return tau, newgf, beta
 
 def write_gf(outfilename, tau, gf_time):
   outfilehandle = open(outfilename, 'w')
@@ -48,9 +48,10 @@ def main():
     ntau = int(sys.argv[3])
     
     matsubarafreq, gf_frequency = load_gf(infilename)
-    tau, gf_time = transform_gf(matsubarafreq, gf_frequency, ntau)
+    tau, gf_time, beta = transform_gf(matsubarafreq, gf_frequency, ntau)
     write_gf(outfilename, tau, gf_time)
     
+    print "Beta is: %f" % beta
     print "Data converted successfully."
   else:
     print "Wrong number of input arguments. Please supply input Green's function, output file name and number of intended imaginary time points."
