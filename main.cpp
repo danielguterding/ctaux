@@ -1,4 +1,5 @@
 //main.cpp
+#include "solver.hpp"
 #include "random.hpp"
 #include "typedefs.hpp"
 #include "files.hpp"
@@ -13,6 +14,10 @@ int main(int argc, char* argv[]){
     SolverParametersReader sreader(solverparameterinfilename);
     SolverParameters p = sreader.get_parameters();
     cout << "Solver parameters successfully read." << endl;
+    
+    CTAUXSolver solver(p);
+    cout << "Impurity solver successfully started." << endl;
+    
     
     
   }
