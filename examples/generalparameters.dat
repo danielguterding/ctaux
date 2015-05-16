@@ -8,6 +8,8 @@
 1.0e4
 #measure phase: number of MC samples, e.g. 1.5e7
 1.5e7
+#number of bins for the imaginary time measurement process, e.g. 1.3e5
+1.3e5
 #input file path with the Weiss field in imaginary time
 examples/bethegf_time_bandwidth_2_10e5tau.dat
 #output file path with output GF in imaginary time

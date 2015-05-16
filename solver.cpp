@@ -8,6 +8,7 @@ CTAUXSolver::CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weiss
   this->outputgf_ptr = &outputgf;
   
   //initialize outputgf with beta and number of time slices, i.e. bins
+  this->outputgf_ptr->generate_timeaxis(this->p.beta, this->p.nbins);
 }
 
 CTAUXSolver::~CTAUXSolver(){

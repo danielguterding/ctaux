@@ -37,6 +37,10 @@ void SolverParametersReader::read(){
   
   getline(infilehandle, line); //read comment line and discard it
   getline(infilehandle, line);
+  this->p.nbins = int(boost::lexical_cast<fptype>(line));
+  
+  getline(infilehandle, line); //read comment line and discard it
+  getline(infilehandle, line);
   this->p.inputfilepathweiss = line;
   
   getline(infilehandle, line); //read comment line and discard it
