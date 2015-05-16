@@ -25,8 +25,17 @@ int main(int argc, char* argv[]){
     CTAUXSolver solver(p, weissfield, outputgf);
     cout << "Impurity solver successfully started." << endl;
     
+    solver.do_warmup();
+    cout << "Warmup phase completed." << endl;
     
+    solver.do_measurement();
+    cout << "Measurement phase completed." << endl;
+    cout << "Impurity solver successfully finished." << endl;
     
+    ImaginaryTimeGreensFunctionWriter gfwriter;
+    gfwriter.write_gf(p.outputfilepathgf, outputgf);
+    cout << "Output Green's function successfully written." << endl;
+    cout << "Program finished." << endl;
   }
   else{
     cout << "Wrong number of input arguments.\nUsage: ctaux [string solverparameterinfilename]" << endl;

@@ -14,3 +14,11 @@ CTAUXSolver::CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weiss
 CTAUXSolver::~CTAUXSolver(){
   
 }
+
+void CTAUXSolver::do_warmup(){
+  
+}
+
+void CTAUXSolver::do_measurement(){
+  
+}

@@ -37,6 +37,15 @@ class ImaginaryTimeGreensFunctionReader{
     ImaginaryTimeGreensFunctionReader();
     void read_gf(const string infilename, ImaginaryTimeGreensFunction& gf);
   private:
+    
+};
+
+class ImaginaryTimeGreensFunctionWriter{
+  public:
+    ImaginaryTimeGreensFunctionWriter();
+    void write_gf(const string outfilename, ImaginaryTimeGreensFunction& gf);
+  private:
+    
 };
 
 #endif 

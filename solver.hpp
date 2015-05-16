@@ -10,6 +10,8 @@ class CTAUXSolver{
   public:
     CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weissfield, ImaginaryTimeGreensFunction& outputgf);
     ~CTAUXSolver();
+    void do_warmup();
+    void do_measurement();
   private:
     SolverParameters p;
     ImaginaryTimeGreensFunction *weissfield_ptr, *outputgf_ptr;

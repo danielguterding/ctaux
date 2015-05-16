@@ -84,6 +84,27 @@ void ImaginaryTimeGreensFunctionReader::read_gf(const string infilename, Imagina
   }
 }
 
+ImaginaryTimeGreensFunctionWriter::ImaginaryTimeGreensFunctionWriter(){
+  
+}
+
+void ImaginaryTimeGreensFunctionWriter::write_gf(const string outfilename, ImaginaryTimeGreensFunction& gf){
+  
+  boost::filesystem::path outfilepath(outfilename);
+  boost::filesystem::ofstream outfilehandle(outfilepath);
+  
+  const int ntimes = gf.get_ntimes();
+  
+  outfilehandle << "#tau in eV^-1 from 0 to beta; GF in eV^-1 real part, imag part;\n";
+  fpctype val = 0;
+  for(int i=0;i<ntimes;i++){
+    val = gf.get_value(i);
+    outfilehandle << boost::lexical_cast<string>(boost::format("%1.14e % 1.14e % 1.14e\n") % gf.get_time(i) % real(val) % imag(val));
+  }
+  
+  outfilehandle.close();
+}
+
 string trim_all(const std::string &str){  //with a more recent version of boost boost::trim_all() can be used instead of this function
 
   return boost::algorithm::find_format_all_copy(
