@@ -1,4 +1,5 @@
 //solver.hpp
+#include "gf.hpp"
 #include "random.hpp"
 #include "files.hpp"
 
@@ -7,10 +8,11 @@
 
 class CTAUXSolver{
   public:
-    CTAUXSolver(SolverParameters& p);
+    CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weissfield, ImaginaryTimeGreensFunction& outputgf);
     ~CTAUXSolver();
   private:
     SolverParameters p;
+    ImaginaryTimeGreensFunction *weissfield_ptr, *outputgf_ptr;
 };
 
 #endif

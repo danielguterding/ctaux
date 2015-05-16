@@ -1,4 +1,5 @@
 //main.cpp
+#include "gf.hpp"
 #include "solver.hpp"
 #include "random.hpp"
 #include "typedefs.hpp"
@@ -15,7 +16,13 @@ int main(int argc, char* argv[]){
     SolverParameters p = sreader.get_parameters();
     cout << "Solver parameters successfully read." << endl;
     
-    CTAUXSolver solver(p);
+    ImaginaryTimeGreensFunctionReader gfreader;
+    ImaginaryTimeGreensFunction weissfield;
+    gfreader.read_gf(p.inputfilepathweiss, weissfield);
+    cout << "Input Weiss field successfully read." << endl;
+    
+    ImaginaryTimeGreensFunction outputgf;
+    CTAUXSolver solver(p, weissfield, outputgf);
     cout << "Impurity solver successfully started." << endl;
     
     

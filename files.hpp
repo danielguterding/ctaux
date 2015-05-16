@@ -8,6 +8,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
+#include "gf.hpp"
 #include "typedefs.hpp"
 
 using namespace std;
@@ -18,6 +19,7 @@ using namespace std;
 struct SolverParameters{
   fptype beta, K, U;
   int nsampleswarmup, nsamplesmeasure;
+  string inputfilepathweiss, outputfilepathgf;
 };
 
 class SolverParametersReader{
@@ -28,6 +30,13 @@ class SolverParametersReader{
     void read();
     string infilename;
     SolverParameters p;
+};
+
+class ImaginaryTimeGreensFunctionReader{
+  public:
+    ImaginaryTimeGreensFunctionReader();
+    void read_gf(const string infilename, ImaginaryTimeGreensFunction& gf);
+  private:
 };
 
 #endif 
