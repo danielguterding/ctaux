@@ -130,14 +130,14 @@ void CTAUXSolver::insert_update(){
   const int po = config_ptr->get_perturbation_order();
   
   //calculate non-tilde quantities
-  Eigen::VectorXcd Qup = Eigen::VectorXcd::Zero(po);
-  Eigen::VectorXcd Qdn = Eigen::VectorXcd::Zero(po);
-  Eigen::VectorXcd Rup = Eigen::VectorXcd::Zero(po);
-  Eigen::VectorXcd Rdn = Eigen::VectorXcd::Zero(po);
-  const fpctype eup = egamma(1, auxspin);
-  const fpctype edn = egamma(-1, auxspin);
-  const fpctype Sup = eup - (eup - 1.0)*wfup_ptr->get_interpolated_value(0);
-  const fpctype Sdn = edn - (edn - 1.0)*wfdn_ptr->get_interpolated_value(0);
+  Eigen::VectorXd Qup = Eigen::VectorXd::Zero(po);
+  Eigen::VectorXd Qdn = Eigen::VectorXd::Zero(po);
+  Eigen::VectorXd Rup = Eigen::VectorXd::Zero(po);
+  Eigen::VectorXd Rdn = Eigen::VectorXd::Zero(po);
+  const fptype eup = egamma(1, auxspin);
+  const fptype edn = egamma(-1, auxspin);
+  const fptype Sup = eup - (eup - 1.0)*wfup_ptr->get_interpolated_value(0);
+  const fptype Sdn = edn - (edn - 1.0)*wfdn_ptr->get_interpolated_value(0);
   for(int l=0;l<po;l++){
     const fptype taul = config_ptr->get_time(l);
     const int auxspinl = config_ptr->get_auxspin(l);
@@ -146,8 +146,8 @@ void CTAUXSolver::insert_update(){
     Rup(l) = -(eup - 1.0)*wfup_ptr->get_interpolated_value(tau - taul);
     Rdn(l) = -(edn - 1.0)*wfdn_ptr->get_interpolated_value(tau - taul);
   }
-  const fpctype paccup = Sup - Rup.dot(Nmatup*Qup);
-  const fpctype paccdn = Sdn - Rdn.dot(Nmatdn*Qdn);
+  const fptype paccup = Sup - Rup.dot(Nmatup*Qup);
+  const fptype paccdn = Sdn - Rdn.dot(Nmatdn*Qdn);
   const fptype pacc = min(1.0, p.K/(po+1.0)*fabs(paccup*paccdn));
   
   const fptype r = rng_ptr->get_value();
@@ -155,16 +155,16 @@ void CTAUXSolver::insert_update(){
     config_ptr->insert(tau, auxspin_dummy);
     
     //calculate tilde quantities
-    const fpctype Stildeup = 1.0/paccup; 
-    const fpctype Stildedn = 1.0/paccdn;
-    Eigen::VectorXcd Qtildeup = -Nmatup*Qup*Stildeup;
-    Eigen::VectorXcd Qtildedn = -Nmatdn*Qdn*Stildedn;
-    Eigen::VectorXcd Rtildeup = -Stildeup*(Rup.transpose()*Nmatup).transpose();
-    Eigen::VectorXcd Rtildedn = -Stildedn*(Rdn.transpose()*Nmatdn).transpose();
-    Eigen::MatrixXcd Ptildeup = Nmatup + Qtildeup*Rtildeup.transpose()/Stildeup;
-    Eigen::MatrixXcd Ptildedn = Nmatdn + Qtildedn*Rtildedn.transpose()/Stildedn;
-    Nmatup = Eigen::MatrixXcd::Zero(po+1, po+1);
-    Nmatdn = Eigen::MatrixXcd::Zero(po+1, po+1);
+    const fptype Stildeup = 1.0/paccup; 
+    const fptype Stildedn = 1.0/paccdn;
+    Eigen::VectorXd Qtildeup = -Nmatup*Qup*Stildeup;
+    Eigen::VectorXd Qtildedn = -Nmatdn*Qdn*Stildedn;
+    Eigen::VectorXd Rtildeup = -Stildeup*(Rup.transpose()*Nmatup).transpose();
+    Eigen::VectorXd Rtildedn = -Stildedn*(Rdn.transpose()*Nmatdn).transpose();
+    Eigen::MatrixXd Ptildeup = Nmatup + Qtildeup*Rtildeup.transpose()/Stildeup;
+    Eigen::MatrixXd Ptildedn = Nmatdn + Qtildedn*Rtildedn.transpose()/Stildedn;
+    Nmatup = Eigen::MatrixXd::Zero(po+1, po+1);
+    Nmatdn = Eigen::MatrixXd::Zero(po+1, po+1);
     Nmatup.block(0,0,po,po) = Ptildeup;
     Nmatdn.block(0,0,po,po) = Ptildedn;
     Nmatup.block(0,po,po,1) = Qtildeup;
@@ -182,12 +182,12 @@ void CTAUXSolver::remove_update(){
   if(po > 0){
     const int ridx = floor(po*rng_ptr->get_value());
     //obtain tilde quantities directly from N matrices
-    const fpctype Stildeup = Nmatup(ridx, ridx);
-    const fpctype Stildedn = Nmatdn(ridx, ridx);
-    Eigen::VectorXcd Qtildeup = Eigen::VectorXcd::Zero(po-1);
-    Eigen::VectorXcd Qtildedn = Eigen::VectorXcd::Zero(po-1);
-    Eigen::VectorXcd Rtildeup = Eigen::VectorXcd::Zero(po-1);
-    Eigen::VectorXcd Rtildedn = Eigen::VectorXcd::Zero(po-1);
+    const fptype Stildeup = Nmatup(ridx, ridx);
+    const fptype Stildedn = Nmatdn(ridx, ridx);
+    Eigen::VectorXd Qtildeup = Eigen::VectorXd::Zero(po-1);
+    Eigen::VectorXd Qtildedn = Eigen::VectorXd::Zero(po-1);
+    Eigen::VectorXd Rtildeup = Eigen::VectorXd::Zero(po-1);
+    Eigen::VectorXd Rtildedn = Eigen::VectorXd::Zero(po-1);
     for(int i=0;i<po;i++){
       if(i<ridx){
         Qtildeup(i) = Nmatup(i,ridx);
@@ -203,16 +203,16 @@ void CTAUXSolver::remove_update(){
       }
     }
   
-    const fpctype paccup = 1.0/Stildeup;
-    const fpctype paccdn = 1.0/Stildedn;
+    const fptype paccup = 1.0/Stildeup;
+    const fptype paccdn = 1.0/Stildedn;
     const fptype pacc = min(1.0, (po+1.0)/p.K*fabs(paccup*paccdn));
   
     const fptype r = rng_ptr->get_value();
     if(r<pacc){ //accept update
       config_ptr->remove(ridx);
       //calculate P tilde matrix
-      Eigen::MatrixXcd Ptildeup = Eigen::MatrixXcd::Zero(po-1, po-1);
-      Eigen::MatrixXcd Ptildedn = Eigen::MatrixXcd::Zero(po-1, po-1);
+      Eigen::MatrixXd Ptildeup = Eigen::MatrixXd::Zero(po-1, po-1);
+      Eigen::MatrixXd Ptildedn = Eigen::MatrixXd::Zero(po-1, po-1);
       if(0==ridx){
         Ptildeup = Nmatup.block(1,1,po-1,po-1);
         Ptildedn = Nmatdn.block(1,1,po-1,po-1);
@@ -239,8 +239,8 @@ void CTAUXSolver::remove_update(){
       //update N matrices
       Nmatup.resize(po-1, po-1);
       Nmatdn.resize(po-1, po-1);
-      Nmatup = Eigen::MatrixXcd::Zero(po-1, po-1);
-      Nmatdn = Eigen::MatrixXcd::Zero(po-1, po-1);
+      Nmatup = Eigen::MatrixXd::Zero(po-1, po-1);
+      Nmatdn = Eigen::MatrixXd::Zero(po-1, po-1);
       Nmatup = Ptildeup - Qtildeup*Rtildeup.transpose()/Stildeup;
       Nmatdn = Ptildedn - Qtildedn*Rtildedn.transpose()/Stildedn;
     }
@@ -251,24 +251,24 @@ void CTAUXSolver::measure_gf(){
   
   const int po = config_ptr->get_perturbation_order();
  
-  Eigen::VectorXcd egup = Eigen::VectorXcd::Zero(po);
-  Eigen::VectorXcd egdn = Eigen::VectorXcd::Zero(po);
+  Eigen::VectorXd egup = Eigen::VectorXd::Zero(po);
+  Eigen::VectorXd egdn = Eigen::VectorXd::Zero(po);
   for(int i=0;i<po;i++){
     egup(i) = egamma( 1, config_ptr->get_auxspin(i)) - 1.0;
     egdn(i) = egamma(-1, config_ptr->get_auxspin(i)) - 1.0;
   }
   
-  Eigen::MatrixXcd Mup = Nmatup*egup.asDiagonal();
-  Eigen::MatrixXcd Mdn = Nmatdn*egdn.asDiagonal();
+  Eigen::MatrixXd Mup = Nmatup*egup.asDiagonal();
+  Eigen::MatrixXd Mdn = Nmatdn*egdn.asDiagonal();
   
-  Eigen::VectorXcd gfup = Eigen::VectorXcd::Zero(po);
-  Eigen::VectorXcd gfdn = Eigen::VectorXcd::Zero(po);
+  Eigen::VectorXd gfup = Eigen::VectorXd::Zero(po);
+  Eigen::VectorXd gfdn = Eigen::VectorXd::Zero(po);
   for(int i=0;i<po;i++){
     gfup(i) = wfup_ptr->get_interpolated_value(config_ptr->get_time(i));
     gfdn(i) = wfdn_ptr->get_interpolated_value(config_ptr->get_time(i));
   }
-  Eigen::VectorXcd Sup = Mup*gfup;
-  Eigen::VectorXcd Sdn = Mdn*gfdn;
+  Eigen::VectorXd Sup = Mup*gfup;
+  Eigen::VectorXd Sdn = Mdn*gfdn;
   
   for(int i=0;i<po;i++){
     const int binidx = floor(config_ptr->get_time(i)/binwidth);
@@ -281,8 +281,8 @@ void CTAUXSolver::construct_interacting_gf(){
   //this function constructs the interacting gf from the binned data
   for(int i=0;i<this->p.nbins;i++){
     const fptype tau = outputgfup_ptr->get_time(i);
-    fpctype valup = wfup_ptr->get_interpolated_value(tau);
-    fpctype valdn = wfdn_ptr->get_interpolated_value(tau);
+    fptype valup = wfup_ptr->get_interpolated_value(tau);
+    fptype valdn = wfdn_ptr->get_interpolated_value(tau);
     for(int j=0;j<this->p.nbins;j++){
       //integration is approximated by rectangles
       valup += wfup_ptr->get_interpolated_value(tau - binmids[j])*gfupbins[j]*binwidth;

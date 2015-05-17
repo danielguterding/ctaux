@@ -12,14 +12,14 @@ class ImaginaryTimeGreensFunction{
   public:
     ImaginaryTimeGreensFunction();
     void generate_timeaxis(const fptype beta, const int ntimes);
-    void set_value(const int idx, const fpctype value){gf[idx] = value;};
+    void set_value(const int idx, const fptype value){gf[idx] = value;};
     fptype get_time(const int idx){return timepoints[idx];};
-    fpctype get_value(const int idx){return gf[idx];};
-    fpctype get_interpolated_value(const fptype tau);
+    fptype get_value(const int idx){return gf[idx];};
+    fptype get_interpolated_value(const fptype tau);
     int get_ntimes(){return ntimes;};
   private:
     vector<fptype> timepoints;
-    vector<fpctype> gf;
+    vector<fptype> gf;
     int ntimes;
     fptype beta, dtau;
 };

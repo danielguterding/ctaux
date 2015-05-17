@@ -10,12 +10,12 @@ def load_gf(infilename):
   nlines = len(lines)
   
   tau = np.zeros((nlines), dtype=float)
-  gf = np.zeros((nlines), dtype=complex)
+  gf = np.zeros((nlines), dtype=float)
   
   for i,l in enumerate(lines):
     splitline = l.strip().split()
     tau[i] = float(splitline[0])
-    gf[i] = complex(float(splitline[1]), float(splitline[2]))
+    gf[i] = float(splitline[1])
     
   return tau, gf
 

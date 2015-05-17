@@ -24,7 +24,7 @@ def transform_gf(matsubarafreq, gf, ntau):
   beta = np.pi/matsubarafreq[0]
   
   tau = np.linspace(0,beta,num=ntau,endpoint=True)
-  newgf = np.zeros((ntau), dtype=complex)
+  newgf = np.zeros((ntau))
   
   for i,t in enumerate(tau):
     newgf[i] = 2.0/beta*np.sum(np.real(gf)*np.cos(t*matsubarafreq) + (np.imag(gf) + np.power(matsubarafreq, -1))*np.sin(t*matsubarafreq)) - 0.5
@@ -33,12 +33,12 @@ def transform_gf(matsubarafreq, gf, ntau):
 
 def write_gf(outfilename, tau, gf_time):
   outfilehandle = open(outfilename, 'w')
-  outfilehandle.write('#tau in eV^-1 from 0 to beta; GF in eV^-1 real part, imag part;\n')
+  outfilehandle.write('#tau in eV^-1 from 0 to beta; GF in eV^-1 real part, imag part is zero;\n')
   ntau = len(tau)
   for i in range(ntau):
     t = tau[i]
     gf = gf_time[i]
-    outfilehandle.write('%1.14e % 1.14e % 1.14e\n' % (t, gf.real, gf.imag))
+    outfilehandle.write('%1.14e % 1.14e\n' % (t, gf))
   outfilehandle.close()
 
 def main():

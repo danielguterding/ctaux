@@ -72,14 +72,14 @@ void ImaginaryTimeGreensFunctionReader::read_gf(const string infilename, Imagina
   vector<string> splitline;
   
   vector<fptype> taupoints;
-  vector<fpctype> inputgf;
+  vector<fptype> inputgf;
   
   getline(infilehandle, line); //read comment line and discard it
   while(getline(infilehandle, line)){
     line = trim_all(line); //erase trailing and leading spaces, reduce intermediate spaces to one space
     boost::split(splitline, line, boost::is_any_of("\t "));
     taupoints.push_back(boost::lexical_cast<fptype>(splitline[0]));
-    inputgf.push_back(fpctype(boost::lexical_cast<fptype>(splitline[1]), boost::lexical_cast<fptype>(splitline[2])));
+    inputgf.push_back(boost::lexical_cast<fptype>(splitline[1]));
   }
   infilehandle.close();
   
@@ -103,11 +103,11 @@ void ImaginaryTimeGreensFunctionWriter::write_gf(const string outfilename, Imagi
   
   const int ntimes = gf.get_ntimes();
   
-  outfilehandle << "#tau in eV^-1 from 0 to beta; GF in eV^-1 real part, imag part;\n";
-  fpctype val = 0;
+  outfilehandle << "#tau in eV^-1 from 0 to beta; GF in eV^-1 real part, imag part is zero;\n";
+  fptype val = 0;
   for(int i=0;i<ntimes;i++){
     val = gf.get_value(i);
-    outfilehandle << boost::lexical_cast<string>(boost::format("%1.14e % 1.14e % 1.14e\n") % gf.get_time(i) % real(val) % imag(val));
+    outfilehandle << boost::lexical_cast<string>(boost::format("%1.14e % 1.14e\n") % gf.get_time(i) % val);
   }
   
   outfilehandle.close();

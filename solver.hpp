@@ -41,10 +41,10 @@ class CTAUXSolver{
     ImaginaryTimeGreensFunction *wfup_ptr, *wfdn_ptr, *outputgfup_ptr, *outputgfdn_ptr;
     CTAUXConfiguration *config_ptr;
     RNG_StdMersenne *rng_ptr;
-    Eigen::MatrixXcd Nmatup, Nmatdn;
+    Eigen::MatrixXd Nmatup, Nmatdn;
     fptype binwidth;
     vector<fptype> binmids;
-    vector<fpctype> gfupbins, gfdnbins;
+    vector<fptype> gfupbins, gfdnbins;
 };
 
 #endif
