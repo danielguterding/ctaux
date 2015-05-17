@@ -34,6 +34,7 @@ int main(int argc, char* argv[]){
     solver.construct_interacting_gf();
     cout << "Constructed interacting Green's function from binned data." << endl;
     cout << "Impurity solver successfully finished." << endl;
+    cout << "Average perturbation order: " << solver.get_average_perturbation_order() << endl;
     
     ImaginaryTimeGreensFunctionWriter gfwriter;
     gfwriter.write_gf(p.outputfilepathgf_up, outputgf_up);

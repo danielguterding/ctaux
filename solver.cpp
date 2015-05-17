@@ -86,6 +86,8 @@ void CTAUXSolver::initialize(){
   Nmatdn.resize(1,1);
   Nmatup(0,0) = 1.0/(egamma( 1, spin) - (egamma( 1, spin) - 1)*wfup_ptr->get_interpolated_value(tau));
   Nmatdn(0,0) = 1.0/(egamma(-1, spin) - (egamma(-1, spin) - 1)*wfdn_ptr->get_interpolated_value(tau));
+  
+  average_po = 0;
 }
 
 fptype CTAUXSolver::egamma(int physicalspin, int auxiliaryspin){
@@ -109,6 +111,7 @@ void CTAUXSolver::do_measurement(){
     step();
     //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
     measure_gf();
+    measure_perturbation_order();
   }
 }
 
@@ -291,4 +294,9 @@ void CTAUXSolver::construct_interacting_gf(){
     outputgfup_ptr->set_value(i, valup);
     outputgfdn_ptr->set_value(i, valdn);
   }
+}
+
+void CTAUXSolver::measure_perturbation_order(){
+  
+  average_po += config_ptr->get_perturbation_order()/fptype(this->p.nsamplesmeasure);
 }

@@ -29,12 +29,14 @@ class CTAUXSolver{
     void do_warmup();
     void do_measurement();
     void construct_interacting_gf();
+    fptype get_average_perturbation_order(){return average_po;};
   private:
     void initialize();
     void step();
     void insert_update();
     void remove_update();
     void measure_gf();
+    void measure_perturbation_order();
     fptype egamma(int physicalspin, int auxiliaryspin);
     fptype gammaparameter;
     SolverParameters p;
@@ -45,6 +47,7 @@ class CTAUXSolver{
     fptype binwidth;
     vector<fptype> binmids;
     vector<fptype> gfupbins, gfdnbins;
+    fptype average_po;
 };
 
 #endif
