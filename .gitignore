@@ -1,2 +1,4 @@
 ctaux
 *.o
+test.dat
+*.kate-swp

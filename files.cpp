@@ -41,11 +41,19 @@ void SolverParametersReader::read(){
   
   getline(infilehandle, line); //read comment line and discard it
   getline(infilehandle, line);
-  this->p.inputfilepathweiss = line;
+  this->p.inputfilepathweiss_up = line;
   
   getline(infilehandle, line); //read comment line and discard it
   getline(infilehandle, line);
-  this->p.outputfilepathgf = line;
+  this->p.inputfilepathweiss_dn = line;
+  
+  getline(infilehandle, line); //read comment line and discard it
+  getline(infilehandle, line);
+  this->p.outputfilepathgf_up = line;
+  
+  getline(infilehandle, line); //read comment line and discard it
+  getline(infilehandle, line);
+  this->p.outputfilepathgf_dn = line;
   
   infilehandle.close();
 }

@@ -17,12 +17,13 @@ int main(int argc, char* argv[]){
     cout << "Solver parameters successfully read." << endl;
     
     ImaginaryTimeGreensFunctionReader gfreader;
-    ImaginaryTimeGreensFunction weissfield;
-    gfreader.read_gf(p.inputfilepathweiss, weissfield);
+    ImaginaryTimeGreensFunction weissfield_up, weissfield_dn;
+    gfreader.read_gf(p.inputfilepathweiss_up, weissfield_up);
+    gfreader.read_gf(p.inputfilepathweiss_dn, weissfield_dn);
     cout << "Input Weiss field successfully read." << endl;
     
-    ImaginaryTimeGreensFunction outputgf;
-    CTAUXSolver solver(p, weissfield, outputgf);
+    ImaginaryTimeGreensFunction outputgf_up, outputgf_dn;
+    CTAUXSolver solver(p, weissfield_up, weissfield_dn, outputgf_up, outputgf_dn);
     cout << "Impurity solver successfully started." << endl;
     
     solver.do_warmup();
@@ -33,7 +34,8 @@ int main(int argc, char* argv[]){
     cout << "Impurity solver successfully finished." << endl;
     
     ImaginaryTimeGreensFunctionWriter gfwriter;
-    gfwriter.write_gf(p.outputfilepathgf, outputgf);
+    gfwriter.write_gf(p.outputfilepathgf_up, outputgf_up);
+    gfwriter.write_gf(p.outputfilepathgf_dn, outputgf_dn);
     cout << "Output Green's function successfully written." << endl;
     cout << "Program finished." << endl;
   }
