@@ -31,6 +31,8 @@ int main(int argc, char* argv[]){
     
     solver.do_measurement();
     cout << "Measurement phase completed." << endl;
+    solver.construct_interacting_gf();
+    cout << "Constructed interacting Green's function from binned data." << endl;
     cout << "Impurity solver successfully finished." << endl;
     
     ImaginaryTimeGreensFunctionWriter gfwriter;

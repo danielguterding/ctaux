@@ -28,13 +28,13 @@ class CTAUXSolver{
     ~CTAUXSolver();
     void do_warmup();
     void do_measurement();
+    void construct_interacting_gf();
   private:
     void initialize();
     void step();
     void insert_update();
     void remove_update();
     void measure_gf();
-    void construct_interacting_gf();
     fptype egamma(int physicalspin, int auxiliaryspin);
     fptype gammaparameter;
     SolverParameters p;

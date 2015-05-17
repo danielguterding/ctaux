@@ -96,7 +96,7 @@ fptype CTAUXSolver::egamma(int physicalspin, int auxiliaryspin){
 void CTAUXSolver::do_warmup(){
   
   for(int i=0;i<p.nsampleswarmup;i++){
-    cout << "Warmup step: " << i << endl;
+    //cout << "Warmup step: " << i << endl;
     step();
     //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
   }
@@ -105,12 +105,11 @@ void CTAUXSolver::do_warmup(){
 void CTAUXSolver::do_measurement(){
   
   for(int i=0;i<p.nsamplesmeasure;i++){
-    cout << "Measurement step: " << i << endl;
+    //cout << "Measurement step: " << i << endl;
     step();
     //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
     measure_gf();
   }
-  construct_interacting_gf();
 }
 
 void CTAUXSolver::step(){
