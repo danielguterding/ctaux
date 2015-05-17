@@ -62,7 +62,7 @@ CTAUXSolver::~CTAUXSolver(){
 
 void CTAUXSolver::initialize(){
   
-  const int seed = 0; //FIXME, constant seed for now
+  const int seed = 1; //FIXME, constant seed for now
   config_ptr = new CTAUXConfiguration;
   rng_ptr = new RNG_StdMersenne(seed);
   
@@ -87,14 +87,16 @@ void CTAUXSolver::do_warmup(){
   for(int i=0;i<p.nsampleswarmup;i++){
     cout << "Warmup step: " << i << endl;
     step();
-    cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
+    //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
   }
 }
 
 void CTAUXSolver::do_measurement(){
   
   for(int i=0;i<p.nsamplesmeasure;i++){
+    cout << "Measurement step: " << i << endl;
     step();
+    //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
     //FIXME, measure gf here
   }
   
@@ -167,68 +169,70 @@ void CTAUXSolver::insert_update(){
 void CTAUXSolver::remove_update(){
   
   const int po = config_ptr->get_perturbation_order();
-  const int ridx = floor(po*rng_ptr->get_value());
-  //obtain tilde quantities directly from N matrices
-  const fpctype Stildeup = Nmatup(ridx, ridx);
-  const fpctype Stildedn = Nmatdn(ridx, ridx);
-  Eigen::VectorXcd Qtildeup = Eigen::VectorXcd::Zero(po-1);
-  Eigen::VectorXcd Qtildedn = Eigen::VectorXcd::Zero(po-1);
-  Eigen::VectorXcd Rtildeup = Eigen::VectorXcd::Zero(po-1);
-  Eigen::VectorXcd Rtildedn = Eigen::VectorXcd::Zero(po-1);
-  for(int i=0;i<po;i++){
-    if(i<ridx){
-      Qtildeup(i) = Nmatup(i,ridx);
-      Qtildedn(i) = Nmatdn(i,ridx);
-      Rtildeup(i) = Nmatup(ridx,i);
-      Rtildedn(i) = Nmatdn(ridx,i);
+  if(po > 0){
+    const int ridx = floor(po*rng_ptr->get_value());
+    //obtain tilde quantities directly from N matrices
+    const fpctype Stildeup = Nmatup(ridx, ridx);
+    const fpctype Stildedn = Nmatdn(ridx, ridx);
+    Eigen::VectorXcd Qtildeup = Eigen::VectorXcd::Zero(po-1);
+    Eigen::VectorXcd Qtildedn = Eigen::VectorXcd::Zero(po-1);
+    Eigen::VectorXcd Rtildeup = Eigen::VectorXcd::Zero(po-1);
+    Eigen::VectorXcd Rtildedn = Eigen::VectorXcd::Zero(po-1);
+    for(int i=0;i<po;i++){
+      if(i<ridx){
+        Qtildeup(i) = Nmatup(i,ridx);
+        Qtildedn(i) = Nmatdn(i,ridx);
+        Rtildeup(i) = Nmatup(ridx,i);
+        Rtildedn(i) = Nmatdn(ridx,i);
+      }
+      else if (i>ridx){
+        Qtildeup(i-1) = Nmatup(i,ridx);
+        Qtildedn(i-1) = Nmatdn(i,ridx);
+        Rtildeup(i-1) = Nmatup(ridx,i);
+        Rtildedn(i-1) = Nmatdn(ridx,i);
+      }
     }
-    else if (i>ridx){
-      Qtildeup(i-1) = Nmatup(i,ridx);
-      Qtildedn(i-1) = Nmatdn(i,ridx);
-      Rtildeup(i-1) = Nmatup(ridx,i);
-      Rtildedn(i-1) = Nmatdn(ridx,i);
-    }
-  }
   
-  const fpctype paccup = 1.0/Stildeup;
-  const fpctype paccdn = 1.0/Stildedn;
-  const fptype pacc = min(1.0, (po+1.0)/p.K*fabs(paccup*paccdn));
+    const fpctype paccup = 1.0/Stildeup;
+    const fpctype paccdn = 1.0/Stildedn;
+    const fptype pacc = min(1.0, (po+1.0)/p.K*fabs(paccup*paccdn));
   
-  const fptype r = rng_ptr->get_value();
-  if(r<pacc){ //accept update
-    config_ptr->remove(ridx);
-    //calculate P tilde matrix
-    Eigen::MatrixXcd Ptildeup = Eigen::MatrixXcd::Zero(po-1, po-1);
-    Eigen::MatrixXcd Ptildedn = Eigen::MatrixXcd::Zero(po-1, po-1);
-    if(0==ridx){
-      Ptildeup = Nmatup.block(1,1,po-1,po-1);
-      Ptildedn = Nmatdn.block(1,1,po-1,po-1);
-    }
-    else if((po-1)==ridx){
-      Ptildeup = Nmatup.block(0,0,po-1,po-1);
-      Ptildedn = Nmatdn.block(0,0,po-1,po-1);
-    }
-    else{ //general case with four blocks
-      //upper left block
-      Ptildeup.block(0,0,ridx,ridx) = Nmatup.block(0,0,ridx,ridx);
-      Ptildedn.block(0,0,ridx,ridx) = Nmatdn.block(0,0,ridx,ridx);
-      //lower left block
-      Ptildeup.block(ridx,0,po-ridx-1,ridx) = Nmatup.block(ridx+1,0,po-ridx-1,ridx);
-      Ptildedn.block(ridx,0,po-ridx-1,ridx) = Nmatdn.block(ridx+1,0,po-ridx-1,ridx);
-      //upper right block
-      Ptildeup.block(0,ridx,ridx,po-ridx-1) = Nmatup.block(0,ridx+1,ridx,po-ridx-1);
-      Ptildedn.block(0,ridx,ridx,po-ridx-1) = Nmatdn.block(0,ridx+1,ridx,po-ridx-1);
-      //lower right block
-      Ptildeup.block(ridx,ridx,po-ridx-1,po-ridx-1) = Nmatup.block(ridx+1,ridx+1,po-ridx-1,po-ridx-1);
-      Ptildedn.block(ridx,ridx,po-ridx-1,po-ridx-1) = Nmatdn.block(ridx+1,ridx+1,po-ridx-1,po-ridx-1);
-    } 
+    const fptype r = rng_ptr->get_value();
+    if(r<pacc){ //accept update
+      config_ptr->remove(ridx);
+      //calculate P tilde matrix
+      Eigen::MatrixXcd Ptildeup = Eigen::MatrixXcd::Zero(po-1, po-1);
+      Eigen::MatrixXcd Ptildedn = Eigen::MatrixXcd::Zero(po-1, po-1);
+      if(0==ridx){
+        Ptildeup = Nmatup.block(1,1,po-1,po-1);
+        Ptildedn = Nmatdn.block(1,1,po-1,po-1);
+      }
+      else if((po-1)==ridx){
+        Ptildeup = Nmatup.block(0,0,po-1,po-1);
+        Ptildedn = Nmatdn.block(0,0,po-1,po-1);
+      }
+      else{ //general case with four blocks
+        //upper left block
+        Ptildeup.block(0,0,ridx,ridx) = Nmatup.block(0,0,ridx,ridx);
+        Ptildedn.block(0,0,ridx,ridx) = Nmatdn.block(0,0,ridx,ridx);
+        //lower left block
+        Ptildeup.block(ridx,0,po-ridx-1,ridx) = Nmatup.block(ridx+1,0,po-ridx-1,ridx);
+        Ptildedn.block(ridx,0,po-ridx-1,ridx) = Nmatdn.block(ridx+1,0,po-ridx-1,ridx);
+        //upper right block
+        Ptildeup.block(0,ridx,ridx,po-ridx-1) = Nmatup.block(0,ridx+1,ridx,po-ridx-1);
+        Ptildedn.block(0,ridx,ridx,po-ridx-1) = Nmatdn.block(0,ridx+1,ridx,po-ridx-1);
+        //lower right block
+        Ptildeup.block(ridx,ridx,po-ridx-1,po-ridx-1) = Nmatup.block(ridx+1,ridx+1,po-ridx-1,po-ridx-1);
+        Ptildedn.block(ridx,ridx,po-ridx-1,po-ridx-1) = Nmatdn.block(ridx+1,ridx+1,po-ridx-1,po-ridx-1);
+      } 
     
-    //update N matrices
-    Nmatup.resize(po-1, po-1);
-    Nmatdn.resize(po-1, po-1);
-    Nmatup = Eigen::MatrixXcd::Zero(po-1, po-1);
-    Nmatdn = Eigen::MatrixXcd::Zero(po-1, po-1);
-    Nmatup = Ptildeup - Qtildeup*Rtildeup.transpose()/Stildeup;
-    Nmatdn = Ptildedn - Qtildedn*Rtildedn.transpose()/Stildedn;
-  }
+      //update N matrices
+      Nmatup.resize(po-1, po-1);
+      Nmatdn.resize(po-1, po-1);
+      Nmatup = Eigen::MatrixXcd::Zero(po-1, po-1);
+      Nmatdn = Eigen::MatrixXcd::Zero(po-1, po-1);
+      Nmatup = Ptildeup - Qtildeup*Rtildeup.transpose()/Stildeup;
+      Nmatdn = Ptildedn - Qtildedn*Rtildedn.transpose()/Stildedn;
+    }
+  }//end if perturbation order > 0
 }
