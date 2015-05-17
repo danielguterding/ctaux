@@ -33,6 +33,8 @@ class CTAUXSolver{
     void step();
     void insert_update();
     void remove_update();
+    void measure_gf();
+    void construct_interacting_gf();
     fptype egamma(int physicalspin, int auxiliaryspin);
     fptype gammaparameter;
     SolverParameters p;
@@ -40,6 +42,9 @@ class CTAUXSolver{
     CTAUXConfiguration *config_ptr;
     RNG_StdMersenne *rng_ptr;
     Eigen::MatrixXcd Nmatup, Nmatdn;
+    fptype binwidth;
+    vector<fptype> binmids;
+    vector<fpctype> gfupbins, gfdnbins;
 };
 
 #endif

@@ -49,6 +49,17 @@ CTAUXSolver::CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weiss
   this->outputgfup_ptr->generate_timeaxis(this->p.beta, this->p.nbins);
   this->outputgfdn_ptr->generate_timeaxis(this->p.beta, this->p.nbins);
   
+  //initialize bins for gf measurement
+  this->binwidth = this->p.beta/this->p.nbins;
+  this->binmids.resize(this->p.nbins);
+  this->gfupbins.resize(this->p.nbins);
+  this->gfdnbins.resize(this->p.nbins);
+  for(int i=0;i<this->p.nbins;i++){
+    this->binmids[i] = (0.5+i)*this->binwidth;
+    this->gfdnbins[i] = 0;
+    this->gfupbins[i] = 0;
+  }
+  
   gammaparameter = acosh(1 + p.beta*p.U/2.0/p.K);
   
   initialize();
@@ -97,9 +108,9 @@ void CTAUXSolver::do_measurement(){
     cout << "Measurement step: " << i << endl;
     step();
     //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
-    //FIXME, measure gf here
+    measure_gf();
   }
-  
+  construct_interacting_gf();
 }
 
 void CTAUXSolver::step(){
@@ -235,4 +246,50 @@ void CTAUXSolver::remove_update(){
       Nmatdn = Ptildedn - Qtildedn*Rtildedn.transpose()/Stildedn;
     }
   }//end if perturbation order > 0
+}
+
+void CTAUXSolver::measure_gf(){
+  
+  const int po = config_ptr->get_perturbation_order();
+ 
+  Eigen::VectorXcd egup = Eigen::VectorXcd::Zero(po);
+  Eigen::VectorXcd egdn = Eigen::VectorXcd::Zero(po);
+  for(int i=0;i<po;i++){
+    egup(i) = egamma( 1, config_ptr->get_auxspin(i)) - 1.0;
+    egdn(i) = egamma(-1, config_ptr->get_auxspin(i)) - 1.0;
+  }
+  
+  Eigen::MatrixXcd Mup = Nmatup*egup.asDiagonal();
+  Eigen::MatrixXcd Mdn = Nmatdn*egdn.asDiagonal();
+  
+  Eigen::VectorXcd gfup = Eigen::VectorXcd::Zero(po);
+  Eigen::VectorXcd gfdn = Eigen::VectorXcd::Zero(po);
+  for(int i=0;i<po;i++){
+    gfup(i) = wfup_ptr->get_interpolated_value(config_ptr->get_time(i));
+    gfdn(i) = wfdn_ptr->get_interpolated_value(config_ptr->get_time(i));
+  }
+  Eigen::VectorXcd Sup = Mup*gfup;
+  Eigen::VectorXcd Sdn = Mdn*gfdn;
+  
+  for(int i=0;i<po;i++){
+    const int binidx = floor(config_ptr->get_time(i)/binwidth);
+    gfupbins[binidx] += Sup(i)/fptype(this->p.nsamplesmeasure);
+    gfdnbins[binidx] += Sdn(i)/fptype(this->p.nsamplesmeasure);
+  }
+}
+
+void CTAUXSolver::construct_interacting_gf(){
+  //this function constructs the interacting gf from the binned data
+  for(int i=0;i<this->p.nbins;i++){
+    const fptype tau = outputgfup_ptr->get_time(i);
+    fpctype valup = wfup_ptr->get_interpolated_value(tau);
+    fpctype valdn = wfdn_ptr->get_interpolated_value(tau);
+    for(int j=0;j<this->p.nbins;j++){
+      //integration is approximated by rectangles
+      valup += wfup_ptr->get_interpolated_value(tau - binmids[j])*gfupbins[j]*binwidth;
+      valdn += wfdn_ptr->get_interpolated_value(tau - binmids[j])*gfdnbins[j]*binwidth;
+    }
+    outputgfup_ptr->set_value(i, valup);
+    outputgfdn_ptr->set_value(i, valdn);
+  }
 }
