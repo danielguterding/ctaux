@@ -2,3 +2,5 @@ ctaux
 *.o
 test.dat
 *.kate-swp
+testup.dat
+testdn.dat
