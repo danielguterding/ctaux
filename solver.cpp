@@ -73,7 +73,7 @@ CTAUXSolver::~CTAUXSolver(){
 
 void CTAUXSolver::initialize(){
   
-  const int seed = 0; //FIXME, constant seed for now
+  const int seed = 1; //FIXME, constant seed for now
   config_ptr = new CTAUXConfiguration;
   rng_ptr = new RNG_StdMersenne(seed);
   
@@ -292,9 +292,11 @@ void CTAUXSolver::construct_interacting_gf(){
     fptype valdn = 0;
     for(int j=0;j<this->p.nbins;j++){
       //integration is approximated by rectangles
-      valup += wfup_ptr->get_interpolated_value(tau - binmids[j])*gfupbins[j]*binwidth;
-      valdn += wfdn_ptr->get_interpolated_value(tau - binmids[j])*gfdnbins[j]*binwidth;
+      valup += wfup_ptr->get_interpolated_value(tau - binmids[j])*gfupbins[j];
+      valdn += wfdn_ptr->get_interpolated_value(tau - binmids[j])*gfdnbins[j];
     }
+    valup *= binwidth;
+    valdn *= binwidth;
     valup += wfup_ptr->get_interpolated_value(tau);
     valdn += wfdn_ptr->get_interpolated_value(tau);
     outputgfup_ptr->set_value(i, valup);
