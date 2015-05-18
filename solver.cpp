@@ -80,12 +80,13 @@ void CTAUXSolver::initialize(){
   const fptype tau = p.beta*rng_ptr->get_value();
   const bool spin = floor(2*rng_ptr->get_value());
   config_ptr->insert(tau, spin);
+  const int auxspin = config_ptr->get_auxspin(0);
   
   //update N matrix for up and dn
   Nmatup.resize(1,1);
   Nmatdn.resize(1,1);
-  Nmatup(0,0) = 1.0/(egamma( 1, spin) - (egamma( 1, spin) - 1)*wfup_ptr->get_interpolated_value(tau));
-  Nmatdn(0,0) = 1.0/(egamma(-1, spin) - (egamma(-1, spin) - 1)*wfdn_ptr->get_interpolated_value(tau));
+  Nmatup(0,0) = 1.0/(egamma( 1, auxspin) - (egamma( 1, auxspin) - 1)*wfup_ptr->get_interpolated_value(0));
+  Nmatdn(0,0) = 1.0/(egamma(-1, auxspin) - (egamma(-1, auxspin) - 1)*wfdn_ptr->get_interpolated_value(0));
   
   average_po = 0;
 }
@@ -112,6 +113,9 @@ void CTAUXSolver::do_measurement(){
     //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
     measure_gf();
     measure_perturbation_order();
+    /*if( 0 == i%100){
+      calculate_Ninverse();
+    }*/
   }
 }
 
@@ -301,4 +305,37 @@ void CTAUXSolver::construct_interacting_gf(){
 void CTAUXSolver::measure_perturbation_order(){
   
   average_po += config_ptr->get_perturbation_order()/fptype(this->p.nsamplesmeasure);
+}
+
+void CTAUXSolver::calculate_Ninverse(){
+  //this function calculates the inverse N matrices directly from the configuration of auxiliary spins and the input Weiss field to check the fast update formulas
+  const int po = config_ptr->get_perturbation_order();
+  
+  Eigen::VectorXd egvecup(po);
+  Eigen::VectorXd egvecdn(po);
+  Eigen::MatrixXd gfmatup(po,po);
+  Eigen::MatrixXd gfmatdn(po,po);
+  for(int i=0;i<po;i++){
+    egvecup(i) = egamma( 1, config_ptr->get_auxspin(i));
+    egvecdn(i) = egamma(-1, config_ptr->get_auxspin(i));
+    for(int j=0;j<po;j++){
+      gfmatup(i,j) = wfup_ptr->get_interpolated_value(config_ptr->get_time(i) - config_ptr->get_time(j));
+      gfmatdn(i,j) = wfdn_ptr->get_interpolated_value(config_ptr->get_time(i) - config_ptr->get_time(j));
+    }
+  }
+  Eigen::MatrixXd Ninvup = egvecup.asDiagonal();
+  Ninvup -= (egvecup - Eigen::VectorXd::Ones(po)).asDiagonal()*gfmatup;
+  Eigen::MatrixXd Ninvdn = egvecdn.asDiagonal();
+  Ninvdn -= (egvecdn - Eigen::VectorXd::Ones(po)).asDiagonal()*gfmatdn; 
+  
+  Eigen::MatrixXd nmatprodup = Ninvup*Nmatup - Eigen::MatrixXd::Identity(po,po);
+  Eigen::MatrixXd nmatproddn = Ninvdn*Nmatdn - Eigen::MatrixXd::Identity(po,po);
+  
+  fptype sum = 0;
+  for(int i=0;i<po;i++){
+    for(int j=0;j<po;j++){
+      sum += fabs(nmatprodup(i,j)) + fabs(nmatproddn(i,j));
+    }
+  }
+  cout << sum << endl;
 }

@@ -37,6 +37,7 @@ class CTAUXSolver{
     void remove_update();
     void measure_gf();
     void measure_perturbation_order();
+    void calculate_Ninverse();
     fptype egamma(int physicalspin, int auxiliaryspin);
     fptype gammaparameter;
     SolverParameters p;
