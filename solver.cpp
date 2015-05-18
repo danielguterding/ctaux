@@ -99,26 +99,16 @@ fptype CTAUXSolver::egamma(int physicalspin, int auxiliaryspin){
 void CTAUXSolver::do_warmup(){
   
   for(int i=0;i<p.nsampleswarmup;i++){
-    //cout << "Warmup step: " << i << endl;
     step();
-    //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
-    /*if( 0 == i%1000){
-      cout << "Step: " << i << endl;
-    }*/
   }
 }
 
 void CTAUXSolver::do_measurement(){
   
   for(int i=0;i<p.nsamplesmeasure;i++){
-    //cout << "Measurement step: " << i << endl;
     step();
-    //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
     measure_gf();
     measure_perturbation_order();
-    /*if( 0 == i%1000){
-      cout << "Step: " << i << endl;
-    }*/
   }
 }
 
@@ -294,12 +284,10 @@ void CTAUXSolver::construct_interacting_gf(){
     fptype valup = 0;
     fptype valdn = 0;
     for(int j=0;j<this->p.nbins;j++){
-      //integration is approximated by rectangles
+      //integration is approximated by rectangles, the bin width drops out in integration
       valup += wfup_ptr->get_interpolated_value(tau - binmids[j])*gfupbins[j];
       valdn += wfdn_ptr->get_interpolated_value(tau - binmids[j])*gfdnbins[j];
     }
-    //valup *= binwidth; //the bin width drops out in the integration
-    //valdn *= binwidth;
     valup += wfup_ptr->get_interpolated_value(tau);
     valdn += wfdn_ptr->get_interpolated_value(tau);
     outputgfup_ptr->set_value(i, valup);
@@ -316,10 +304,10 @@ void CTAUXSolver::calculate_Ninverse(){
   //this function calculates the inverse N matrices directly from the configuration of auxiliary spins and the input Weiss field to check the fast update formulas
   const int po = config_ptr->get_perturbation_order();
   
-  Eigen::VectorXd egvecup(po);
-  Eigen::VectorXd egvecdn(po);
-  Eigen::MatrixXd gfmatup(po,po);
-  Eigen::MatrixXd gfmatdn(po,po);
+  Eigen::VectorXd egvecup = Eigen::VectorXd::Zero(po);
+  Eigen::VectorXd egvecdn = Eigen::VectorXd::Zero(po);
+  Eigen::MatrixXd gfmatup = Eigen::MatrixXd::Zero(po, po);
+  Eigen::MatrixXd gfmatdn = Eigen::MatrixXd::Zero(po, po);
   for(int i=0;i<po;i++){
     egvecup(i) = egamma( 1, config_ptr->get_auxspin(i));
     egvecdn(i) = egamma(-1, config_ptr->get_auxspin(i));
