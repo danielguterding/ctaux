@@ -337,5 +337,5 @@ void CTAUXSolver::calculate_Ninverse(){
       sum += fabs(nmatprodup(i,j)) + fabs(nmatproddn(i,j));
     }
   }
-  cout << sum << endl;
+  cout << sum << endl; //output should be zero if fast update algorithm works properly
 }
