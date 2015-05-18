@@ -50,14 +50,14 @@ CTAUXSolver::CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weiss
   this->outputgfdn_ptr->generate_timeaxis(this->p.beta, this->p.nbins);
   
   //initialize bins for gf measurement
-  this->binwidth = this->p.beta/this->p.nbins;
+  this->binwidth = this->p.beta/fptype(this->p.nbins);
   this->binmids.resize(this->p.nbins);
   this->gfupbins.resize(this->p.nbins);
   this->gfdnbins.resize(this->p.nbins);
   for(int i=0;i<this->p.nbins;i++){
     this->binmids[i] = (0.5+i)*this->binwidth;
-    this->gfdnbins[i] = 0;
     this->gfupbins[i] = 0;
+    this->gfdnbins[i] = 0;
   }
   
   gammaparameter = acosh(1 + p.beta*p.U/2.0/p.K);
@@ -73,7 +73,7 @@ CTAUXSolver::~CTAUXSolver(){
 
 void CTAUXSolver::initialize(){
   
-  const int seed = 1; //FIXME, constant seed for now
+  const int seed = 0; //FIXME, constant seed for now
   config_ptr = new CTAUXConfiguration;
   rng_ptr = new RNG_StdMersenne(seed);
   
@@ -92,7 +92,7 @@ void CTAUXSolver::initialize(){
 
 fptype CTAUXSolver::egamma(int physicalspin, int auxiliaryspin){
   
-  return exp(gammaparameter*physicalspin*auxiliaryspin);
+  return exp(gammaparameter*fptype(physicalspin)*fptype(auxiliaryspin));
 }
 
 void CTAUXSolver::do_warmup(){
@@ -284,13 +284,15 @@ void CTAUXSolver::construct_interacting_gf(){
   //this function constructs the interacting gf from the binned data
   for(int i=0;i<this->p.nbins;i++){
     const fptype tau = outputgfup_ptr->get_time(i);
-    fptype valup = wfup_ptr->get_interpolated_value(tau);
-    fptype valdn = wfdn_ptr->get_interpolated_value(tau);
+    fptype valup = 0;
+    fptype valdn = 0;
     for(int j=0;j<this->p.nbins;j++){
       //integration is approximated by rectangles
       valup += wfup_ptr->get_interpolated_value(tau - binmids[j])*gfupbins[j]*binwidth;
       valdn += wfdn_ptr->get_interpolated_value(tau - binmids[j])*gfdnbins[j]*binwidth;
     }
+    valup += wfup_ptr->get_interpolated_value(tau);
+    valdn += wfdn_ptr->get_interpolated_value(tau);
     outputgfup_ptr->set_value(i, valup);
     outputgfdn_ptr->set_value(i, valdn);
   }
