@@ -102,6 +102,9 @@ void CTAUXSolver::do_warmup(){
     //cout << "Warmup step: " << i << endl;
     step();
     //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
+    /*if( 0 == i%1000){
+      cout << "Step: " << i << endl;
+    }*/
   }
 }
 
@@ -113,8 +116,8 @@ void CTAUXSolver::do_measurement(){
     //cout << "Perturbation order: " << config_ptr->get_perturbation_order() << endl;
     measure_gf();
     measure_perturbation_order();
-    /*if( 0 == i%100){
-      calculate_Ninverse();
+    /*if( 0 == i%1000){
+      cout << "Step: " << i << endl;
     }*/
   }
 }
@@ -295,8 +298,8 @@ void CTAUXSolver::construct_interacting_gf(){
       valup += wfup_ptr->get_interpolated_value(tau - binmids[j])*gfupbins[j];
       valdn += wfdn_ptr->get_interpolated_value(tau - binmids[j])*gfdnbins[j];
     }
-    valup *= binwidth;
-    valdn *= binwidth;
+    //valup *= binwidth; //the bin width drops out in the integration
+    //valdn *= binwidth;
     valup += wfup_ptr->get_interpolated_value(tau);
     valdn += wfdn_ptr->get_interpolated_value(tau);
     outputgfup_ptr->set_value(i, valup);
