@@ -300,7 +300,7 @@ void CTAUXSolver::measure_perturbation_order(){
   average_po += config_ptr->get_perturbation_order()/fptype(this->p.nsamplesmeasure);
 }
 
-void CTAUXSolver::calculate_Ninverse(){
+/*void CTAUXSolver::calculate_Ninverse(){
   //this function calculates the inverse N matrices directly from the configuration of auxiliary spins and the input Weiss field to check the fast update formulas
   const int po = config_ptr->get_perturbation_order();
   
@@ -331,4 +331,4 @@ void CTAUXSolver::calculate_Ninverse(){
     }
   }
   cout << sum << endl; //output should be zero if fast update algorithm works properly
-}
+}*/
