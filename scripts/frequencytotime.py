@@ -45,7 +45,7 @@ def main():
   if(4 == len(sys.argv)):
     infilename = sys.argv[1]
     outfilename = sys.argv[2]
-    ntau = int(sys.argv[3])
+    ntau = int(float(sys.argv[3]))
     
     matsubarafreq, gf_frequency = load_gf(infilename)
     tau, gf_time, beta = transform_gf(matsubarafreq, gf_frequency, ntau)
