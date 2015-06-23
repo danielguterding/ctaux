@@ -205,7 +205,7 @@ void CTAUXSolver::remove_update(){
   
     const fptype paccup = 1.0/Stildeup;
     const fptype paccdn = 1.0/Stildedn;
-    const fptype pacc = min(1.0, (po+1.0)/p.K*fabs(paccup*paccdn));
+    const fptype pacc = min(1.0, (po+1.0)/p.K/fabs(paccup*paccdn)); //here prem^-1 occurs!
   
     const fptype r = rng_ptr->get_value();
     if(r<pacc){ //accept update
