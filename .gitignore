@@ -4,3 +4,6 @@ test.dat
 *.kate-swp
 testup.dat
 testdn.dat
+*.dat*
+examples/SrCuClO_500w_beta40_0
+testdata/
