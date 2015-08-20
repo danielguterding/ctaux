@@ -76,7 +76,8 @@ void CTAUXSolver::initialize(){
   
   const int seed = noderank; //use noderank as seed
   config_ptr = new CTAUXConfiguration;
-  rng_ptr = new RNG_StdMersenne(seed);
+  //rng_ptr = new RNG_StdMersenne(seed);
+  rng_ptr = new RNG_Philox4x32(seed);
   
   const fptype tau = p.beta*rng_ptr->get_value();
   const bool spin = floor(2*rng_ptr->get_value());

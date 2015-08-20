@@ -46,7 +46,7 @@ class CTAUXSolver{
     SolverParameters p;
     ImaginaryTimeGreensFunction *wfup_ptr, *wfdn_ptr, *outputgfup_ptr, *outputgfdn_ptr;
     CTAUXConfiguration *config_ptr;
-    RNG_StdMersenne *rng_ptr;
+    RNG *rng_ptr;
     Eigen::MatrixXd Nmatup, Nmatdn;
     fptype binwidth;
     vector<fptype> binmids;
