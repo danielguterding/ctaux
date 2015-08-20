@@ -18,7 +18,7 @@ using namespace std;
 
 struct SolverParameters{
   fptype beta, K, U;
-  int nsampleswarmup, nsamplesmeasure, nbins;
+  long int nsampleswarmup, nsamplesmeasure, nbins;
   string inputfilepathweiss_up, inputfilepathweiss_dn, outputfilepathgf_up, outputfilepathgf_dn;
 };
 

@@ -29,15 +29,15 @@ void SolverParametersReader::read(){
   
   getline(infilehandle, line); //read comment line and discard it
   getline(infilehandle, line);
-  this->p.nsampleswarmup = int(boost::lexical_cast<fptype>(line));
+  this->p.nsampleswarmup = (long int)(boost::lexical_cast<fptype>(line));
   
   getline(infilehandle, line); //read comment line and discard it
   getline(infilehandle, line);
-  this->p.nsamplesmeasure = int(boost::lexical_cast<fptype>(line));
+  this->p.nsamplesmeasure = (long int)(boost::lexical_cast<fptype>(line));
   
   getline(infilehandle, line); //read comment line and discard it
   getline(infilehandle, line);
-  this->p.nbins = int(boost::lexical_cast<fptype>(line));
+  this->p.nbins = (long int)(boost::lexical_cast<fptype>(line));
   
   getline(infilehandle, line); //read comment line and discard it
   getline(infilehandle, line);

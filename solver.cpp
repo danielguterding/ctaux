@@ -99,14 +99,14 @@ fptype CTAUXSolver::egamma(int physicalspin, int auxiliaryspin){
 
 void CTAUXSolver::do_warmup(){
   
-  for(int i=0;i<p.nsampleswarmup;i++){
+  for(long int i=0;i<p.nsampleswarmup;i++){
     step();
   }
 }
 
 void CTAUXSolver::do_measurement(){
   
-  for(int i=0;i<p.nsamplesmeasure;i++){
+  for(long int i=0;i<p.nsamplesmeasure;i++){
     step();
     measure_gf();
     measure_perturbation_order();
