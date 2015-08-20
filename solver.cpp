@@ -109,6 +109,9 @@ void CTAUXSolver::do_measurement(){
     step();
     measure_gf();
     measure_perturbation_order();
+    #if DEBUG
+    calculate_Ninverse();
+    #endif
   }
 }
 
@@ -120,9 +123,6 @@ void CTAUXSolver::step(){
   else{
     remove_update();
   }
-  #if DEBUG
-  calculate_Ninverse();
-  #endif
 }
 
 void CTAUXSolver::insert_update(){
