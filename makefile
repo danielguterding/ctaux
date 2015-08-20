@@ -1,9 +1,9 @@
-CXX      = g++
+CXX      = mpic++.openmpi
 CXXFLAGS = -Wall -O3 -std=c++11 
 CXXFLAGS += -I/home/guterding/local/eigen3/
 
 OBJECTS = main.o files.o random.o solver.o gf.o
-LDFLAGS = -lboost_system -lboost_filesystem
+LDFLAGS = -lboost_system -lboost_filesystem -lboost_mpi -lboost_serialization
 DEFINES = 
 
 all : $(OBJECTS)

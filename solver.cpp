@@ -37,13 +37,14 @@ fptype CTAUXConfiguration::get_time(const uint idx){
   return timepoints[idx];
 }
 
-CTAUXSolver::CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weissfield_up, ImaginaryTimeGreensFunction& weissfield_dn, ImaginaryTimeGreensFunction& outputgf_up, ImaginaryTimeGreensFunction& outputgf_dn){
+CTAUXSolver::CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weissfield_up, ImaginaryTimeGreensFunction& weissfield_dn, ImaginaryTimeGreensFunction& outputgf_up, ImaginaryTimeGreensFunction& outputgf_dn, const uint noderank){
   
   this->p = p;
   this->wfup_ptr = &weissfield_up;
   this->wfdn_ptr = &weissfield_dn;
   this->outputgfup_ptr = &outputgf_up;
   this->outputgfdn_ptr = &outputgf_dn;
+  this->noderank = noderank;
   
   //initialize outputgf with beta and number of time slices, i.e. bins
   this->outputgfup_ptr->generate_timeaxis(this->p.beta, this->p.nbins);
@@ -73,7 +74,7 @@ CTAUXSolver::~CTAUXSolver(){
 
 void CTAUXSolver::initialize(){
   
-  const int seed = 1; //FIXME, constant seed for now
+  const int seed = noderank; //use noderank as seed
   config_ptr = new CTAUXConfiguration;
   rng_ptr = new RNG_StdMersenne(seed);
   

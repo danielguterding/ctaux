@@ -17,6 +17,8 @@ class ImaginaryTimeGreensFunction{
     fptype get_value(const int idx){return gf[idx];};
     fptype get_interpolated_value(const fptype tau);
     int get_ntimes(){return ntimes;};
+    vector<fptype> get_gf(){return gf;};
+    void set_gf(vector<fptype> gf){this->gf = gf;};
   private:
     vector<fptype> timepoints;
     vector<fptype> gf;

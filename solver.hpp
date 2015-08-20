@@ -24,7 +24,7 @@ class CTAUXConfiguration{
 
 class CTAUXSolver{
   public:
-    CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weissfield_up, ImaginaryTimeGreensFunction& weissfield_dn, ImaginaryTimeGreensFunction& outputgf_up, ImaginaryTimeGreensFunction& outputgf_dn);
+    CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weissfield_up, ImaginaryTimeGreensFunction& weissfield_dn, ImaginaryTimeGreensFunction& outputgf_up, ImaginaryTimeGreensFunction& outputgf_dn, const uint noderank);
     ~CTAUXSolver();
     void do_warmup();
     void do_measurement();
@@ -40,6 +40,7 @@ class CTAUXSolver{
     #if DEBUG 
     void calculate_Ninverse();
     #endif
+    uint noderank;
     fptype egamma(int physicalspin, int auxiliaryspin);
     fptype gammaparameter;
     SolverParameters p;
