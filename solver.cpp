@@ -120,6 +120,9 @@ void CTAUXSolver::step(){
   else{
     remove_update();
   }
+  #if DEBUG
+  calculate_Ninverse();
+  #endif
 }
 
 void CTAUXSolver::insert_update(){
@@ -205,7 +208,7 @@ void CTAUXSolver::remove_update(){
   
     const fptype paccup = 1.0/Stildeup;
     const fptype paccdn = 1.0/Stildedn;
-    const fptype pacc = min(1.0, (po+1.0)/p.K/fabs(paccup*paccdn)); //here prem^-1 occurs!
+    const fptype pacc = min(1.0, fptype(po)/p.K/fabs(paccup*paccdn)); //here prem^-1 occurs!, po and not po+1 appears because we are doing n+1 -> n
   
     const fptype r = rng_ptr->get_value();
     if(r<pacc){ //accept update
@@ -300,7 +303,8 @@ void CTAUXSolver::measure_perturbation_order(){
   average_po += config_ptr->get_perturbation_order()/fptype(this->p.nsamplesmeasure);
 }
 
-/*void CTAUXSolver::calculate_Ninverse(){
+#if DEBUG
+void CTAUXSolver::calculate_Ninverse(){
   //this function calculates the inverse N matrices directly from the configuration of auxiliary spins and the input Weiss field to check the fast update formulas
   const int po = config_ptr->get_perturbation_order();
   
@@ -331,4 +335,5 @@ void CTAUXSolver::measure_perturbation_order(){
     }
   }
   cout << sum << endl; //output should be zero if fast update algorithm works properly
-}*/
+}
+#endif
