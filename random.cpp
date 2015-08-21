@@ -34,7 +34,7 @@ RNG_Philox4x32::~RNG_Philox4x32(){
 }
 
 fptype RNG_Philox4x32::get_value(){
-  if(3 == valcounter){ //regenerate random values if all four have been used
+  if(4 == valcounter){ //regenerate random values if all four have been used
     c[0] = totalcounter;
     r = (*rng_ptr)(c, k);
     valcounter = 0;
