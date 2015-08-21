@@ -43,3 +43,53 @@ fptype RNG_Philox4x32::get_value(){
   returnval = r[valcounter++]/maxval;
   return returnval;
 }
+
+RNG_Philox4x64::RNG_Philox4x64(const int key){
+  
+  this->rng_ptr = new r123::Philox4x64;
+  this->k[0] = key;
+  valcounter = 3; //Philox4x64 generates four 64bit random values in each round, this counter determines how many of the four have been used
+  totalcounter = 0; //this variable is a running index of how often the random number generator has been executed
+  maxval = pow(2,64)-1;
+}
+
+RNG_Philox4x64::~RNG_Philox4x64(){
+  
+  delete rng_ptr;
+}
+
+fptype RNG_Philox4x64::get_value(){
+  if(4 == valcounter){ //regenerate random values if all four have been used
+    c[0] = totalcounter;
+    r = (*rng_ptr)(c, k);
+    valcounter = 0;
+    totalcounter++;
+  }
+  returnval = r[valcounter++]/maxval;
+  return returnval;
+}
+
+RNG_Threefry4x64::RNG_Threefry4x64(const int key){
+  
+  this->rng_ptr = new r123::Threefry4x64;
+  this->k[0] = key;
+  valcounter = 3; //Threefry4x64 generates four 64bit random values in each round, this counter determines how many of the four have been used
+  totalcounter = 0; //this variable is a running index of how often the random number generator has been executed
+  maxval = pow(2,64)-1;
+}
+
+RNG_Threefry4x64::~RNG_Threefry4x64(){
+  
+  delete rng_ptr;
+}
+
+fptype RNG_Threefry4x64::get_value(){
+  if(4 == valcounter){ //regenerate random values if all four have been used
+    c[0] = totalcounter;
+    r = (*rng_ptr)(c, k);
+    valcounter = 0;
+    totalcounter++;
+  }
+  returnval = r[valcounter++]/maxval;
+  return returnval;
+}

@@ -1,6 +1,7 @@
 //random.hpp
 #include <random>
 #include <Random123/philox.h>
+#include <Random123/threefry.h>
 
 #include "typedefs.hpp"
 
@@ -29,6 +30,7 @@ class RNG_StdMersenne : public RNG{
 
 class RNG_Philox4x32 : public RNG{
   //Philox4x32 from Random123 library
+  //http://dx.doi.org/10.1145/2063384.2063405
   public:
     RNG_Philox4x32(const int key);
     ~RNG_Philox4x32();
@@ -42,6 +44,42 @@ class RNG_Philox4x32 : public RNG{
     r123::Philox4x32::ctr_type c={{}}; //contains loop variable
     r123::Philox4x32::ctr_type r={{}}; //contains random numbers
     r123::Philox4x32::key_type k={{}}; //contains seed
+};
+
+class RNG_Philox4x64 : public RNG{
+  //Philox4x64 from Random123 library
+  //http://dx.doi.org/10.1145/2063384.2063405
+  public:
+    RNG_Philox4x64(const int key);
+    ~RNG_Philox4x64();
+    fptype get_value();
+  private:
+    int valcounter;
+    long int totalcounter;
+    fptype maxval;
+    fptype returnval;
+    r123::Philox4x64* rng_ptr;
+    r123::Philox4x64::ctr_type c={{}}; //contains loop variable
+    r123::Philox4x64::ctr_type r={{}}; //contains random numbers
+    r123::Philox4x64::key_type k={{}}; //contains seed
+};
+
+class RNG_Threefry4x64 : public RNG{
+  //Threefry4x64 from Random123 library
+  //http://dx.doi.org/10.1145/2063384.2063405
+  public:
+    RNG_Threefry4x64(const int key);
+    ~RNG_Threefry4x64();
+    fptype get_value();
+  private:
+    int valcounter;
+    long int totalcounter;
+    fptype maxval;
+    fptype returnval;
+    r123::Threefry4x64* rng_ptr;
+    r123::Threefry4x64::ctr_type c={{}}; //contains loop variable
+    r123::Threefry4x64::ctr_type r={{}}; //contains random numbers
+    r123::Threefry4x64::key_type k={{}}; //contains seed
 };
 
 #endif
