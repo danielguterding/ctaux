@@ -79,7 +79,8 @@ void ImaginaryTimeGreensFunctionReader::read_gf(const string infilename, Imagina
     line = trim_all(line); //erase trailing and leading spaces, reduce intermediate spaces to one space
     boost::split(splitline, line, boost::is_any_of("\t "));
     taupoints.push_back(boost::lexical_cast<fptype>(splitline[0]));
-    inputgf.push_back(boost::lexical_cast<fptype>(splitline[1]));
+    //inout GF on tau axis must be positive!
+    inputgf.push_back(fabs(boost::lexical_cast<fptype>(splitline[1])));
   }
   infilehandle.close();
   
