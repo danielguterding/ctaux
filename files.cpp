@@ -107,7 +107,7 @@ void ImaginaryTimeGreensFunctionWriter::write_gf(const string outfilename, Imagi
   outfilehandle << "#tau in eV^-1 from 0 to beta; GF in eV^-1 real part, imag part is zero;\n";
   fptype val = 0;
   for(int i=0;i<ntimes;i++){
-    val = gf.get_value(i);
+    val = -fabs(gf.get_value(i));
     outfilehandle << boost::lexical_cast<string>(boost::format("%1.14e % 1.14e\n") % gf.get_time(i) % val);
   }
   
