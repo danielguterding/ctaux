@@ -61,7 +61,10 @@ CTAUXSolver::CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weiss
     this->gfdnbins[i] = 0;
   }
   
-  gammaparameter = acosh(1 + p.beta*p.U/2.0/p.K);
+  this->gammaparameter = acosh(1 + p.beta*p.U/2.0/p.K);
+  this->update_accepted = 0;
+  this->average_po = 0;
+  this->acceptance_ratio = 0;
   
   initialize();
 }
@@ -104,8 +107,6 @@ void CTAUXSolver::initialize(){
   Nmatdn.resize(1,1);
   Nmatup(0,0) = 1.0/(egamma( 1, auxspin) - (egamma( 1, auxspin) - 1)*wfup_ptr->get_interpolated_value(0));
   Nmatdn(0,0) = 1.0/(egamma(-1, auxspin) - (egamma(-1, auxspin) - 1)*wfdn_ptr->get_interpolated_value(0));
-  
-  average_po = 0;
 }
 
 fptype CTAUXSolver::egamma(int physicalspin, int auxiliaryspin){
@@ -126,6 +127,7 @@ void CTAUXSolver::do_measurement(){
     step();
     measure_gf();
     measure_perturbation_order();
+    measure_acceptance_ratio();
     #if DEBUG
     calculate_Ninverse();
     #endif
@@ -134,6 +136,7 @@ void CTAUXSolver::do_measurement(){
 
 void CTAUXSolver::step(){
   
+  update_accepted = 0;
   if(rng_ptr->get_value() < 0.5){
     insert_update();
   }
@@ -172,6 +175,7 @@ void CTAUXSolver::insert_update(){
   
   const fptype r = rng_ptr->get_value();
   if(r<pacc){ //accept update
+    update_accepted = 1;
     config_ptr->insert(tau, auxspin_dummy);
     
     //calculate tilde quantities
@@ -229,6 +233,7 @@ void CTAUXSolver::remove_update(){
   
     const fptype r = rng_ptr->get_value();
     if(r<pacc){ //accept update
+      update_accepted = 1;
       config_ptr->remove(ridx);
       //calculate P tilde matrix
       Eigen::MatrixXd Ptildeup = Eigen::MatrixXd::Zero(po-1, po-1);
@@ -318,6 +323,11 @@ void CTAUXSolver::construct_interacting_gf(){
 void CTAUXSolver::measure_perturbation_order(){
   
   average_po += config_ptr->get_perturbation_order()/fptype(this->p.nsamplesmeasure);
+}
+
+void CTAUXSolver::measure_acceptance_ratio(){
+  
+  acceptance_ratio += update_accepted/fptype(this->p.nsamplesmeasure);
 }
 
 #if DEBUG

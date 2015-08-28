@@ -73,6 +73,12 @@ int main(int argc, char* argv[]){
     mpi::reduce(mpicomm, polocal/nnodes, poaveraged, std::plus<fptype>(), 0);
     if(mpicomm.rank() == 0){cout << "Average perturbation order: " << poaveraged << endl;};
     
+    //calculate averaged acceptance ratio over nodes
+    const fptype arlocal = solver.get_acceptance_ratio();
+    fptype araveraged = 0;
+    mpi::reduce(mpicomm, arlocal/nnodes, araveraged, std::plus<fptype>(), 0);
+    if(mpicomm.rank() == 0){cout << "Acceptance ratio: " << araveraged << endl;};
+    
     if(mpicomm.rank() == 0){
       ImaginaryTimeGreensFunctionWriter gfwriter;
       gfwriter.write_gf(p.outputfilepathgf_up, outputgf_up);

@@ -30,6 +30,7 @@ class CTAUXSolver{
     void do_measurement();
     void construct_interacting_gf();
     fptype get_average_perturbation_order(){return average_po;};
+    fptype get_acceptance_ratio(){return acceptance_ratio;};
   private:
     void initialize();
     void step();
@@ -37,6 +38,7 @@ class CTAUXSolver{
     void remove_update();
     void measure_gf();
     void measure_perturbation_order();
+    void measure_acceptance_ratio();
     #if DEBUG 
     void calculate_Ninverse();
     #endif
@@ -51,7 +53,8 @@ class CTAUXSolver{
     fptype binwidth;
     vector<fptype> binmids;
     vector<fptype> gfupbins, gfdnbins;
-    fptype average_po;
+    fptype average_po, acceptance_ratio;
+    bool update_accepted;
 };
 
 #endif
