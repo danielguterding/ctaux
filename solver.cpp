@@ -173,6 +173,11 @@ void CTAUXSolver::insert_update(){
   const fptype paccdn = Sdn - Rdn.dot(Nmatdn*Qdn);
   const fptype pacc = min(1.0, p.K/(po+1.0)*fabs(paccup*paccdn));
   
+  #if DEBUG
+  const fptype detninvup_n = Nmatup.inverse().determinant();
+  const fptype detninvdn_n = Nmatdn.inverse().determinant();
+  #endif
+  
   const fptype r = rng_ptr->get_value();
   if(r<pacc){ //accept update
     update_accepted = 1;
@@ -197,6 +202,13 @@ void CTAUXSolver::insert_update(){
     Nmatdn.block(po,0,1,po) = Rtildedn.transpose();
     Nmatup(po,po) = Stildeup;
     Nmatdn(po,po) = Stildedn;
+    
+    #if DEBUG
+    const fptype detninvup_np1 = Nmatup.inverse().determinant();
+    const fptype detninvdn_np1 = Nmatdn.inverse().determinant();
+    const fptype pacc_explicit = min(1.0, p.K/(po+1.0)*detninvup_np1*detninvdn_np1/detninvup_n/detninvdn_n);
+    cout << pacc << " " << pacc_explicit << endl;
+    #endif
   }
 }
 
@@ -230,7 +242,12 @@ void CTAUXSolver::remove_update(){
     const fptype paccup = 1.0/Stildeup;
     const fptype paccdn = 1.0/Stildedn;
     const fptype pacc = min(1.0, fptype(po)/p.K/fabs(paccup*paccdn)); //here prem^-1 occurs!, po and not po+1 appears because we are doing n+1 -> n
-  
+    
+    #if DEBUG
+    const fptype detninvup_np1 = Nmatup.inverse().determinant();
+    const fptype detninvdn_np1 = Nmatdn.inverse().determinant();
+    #endif
+    
     const fptype r = rng_ptr->get_value();
     if(r<pacc){ //accept update
       update_accepted = 1;
@@ -268,6 +285,13 @@ void CTAUXSolver::remove_update(){
       Nmatdn = Eigen::MatrixXd::Zero(po-1, po-1);
       Nmatup = Ptildeup - Qtildeup*Rtildeup.transpose()/Stildeup;
       Nmatdn = Ptildedn - Qtildedn*Rtildedn.transpose()/Stildedn;
+      
+      #if DEBUG
+      const fptype detninvup_n = Nmatup.inverse().determinant();
+      const fptype detninvdn_n = Nmatdn.inverse().determinant();
+      const fptype pacc_explicit = min(1.0, fptype(po)/p.K*detninvup_n*detninvdn_n/detninvup_np1/detninvdn_np1);
+      cout << pacc << " " << pacc_explicit << endl;
+      #endif
     }
   }//end if perturbation order > 0
 }
