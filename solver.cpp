@@ -192,14 +192,14 @@ void CTAUXSolver::insert_update(){
     Eigen::VectorXd Rtildedn = -Stildedn*(Rdn.transpose()*Nmatdn).transpose();
     Eigen::MatrixXd Ptildeup = Nmatup + Qtildeup*Rtildeup.transpose()/Stildeup;
     Eigen::MatrixXd Ptildedn = Nmatdn + Qtildedn*Rtildedn.transpose()/Stildedn;
-    Nmatup = Eigen::MatrixXd::Zero(po+1, po+1);
-    Nmatdn = Eigen::MatrixXd::Zero(po+1, po+1);
-    Nmatup.block(0,0,po,po) = Ptildeup;
-    Nmatdn.block(0,0,po,po) = Ptildedn;
-    Nmatup.block(0,po,po,1) = Qtildeup;
-    Nmatdn.block(0,po,po,1) = Qtildedn;
-    Nmatup.block(po,0,1,po) = Rtildeup.transpose();
-    Nmatdn.block(po,0,1,po) = Rtildedn.transpose();
+    Nmatup.noalias() = Eigen::MatrixXd::Zero(po+1, po+1);
+    Nmatdn.noalias() = Eigen::MatrixXd::Zero(po+1, po+1);
+    Nmatup.block(0,0,po,po).noalias() = Ptildeup;
+    Nmatdn.block(0,0,po,po).noalias() = Ptildedn;
+    Nmatup.block(0,po,po,1).noalias() = Qtildeup;
+    Nmatdn.block(0,po,po,1).noalias() = Qtildedn;
+    Nmatup.block(po,0,1,po).noalias() = Rtildeup.transpose();
+    Nmatdn.block(po,0,1,po).noalias() = Rtildedn.transpose();
     Nmatup(po,po) = Stildeup;
     Nmatdn(po,po) = Stildedn;
     
@@ -256,35 +256,35 @@ void CTAUXSolver::remove_update(){
       Eigen::MatrixXd Ptildeup = Eigen::MatrixXd::Zero(po-1, po-1);
       Eigen::MatrixXd Ptildedn = Eigen::MatrixXd::Zero(po-1, po-1);
       if(0==ridx){
-        Ptildeup = Nmatup.block(1,1,po-1,po-1);
-        Ptildedn = Nmatdn.block(1,1,po-1,po-1);
+        Ptildeup.noalias() = Nmatup.block(1,1,po-1,po-1);
+        Ptildedn.noalias() = Nmatdn.block(1,1,po-1,po-1);
       }
       else if((po-1)==ridx){
-        Ptildeup = Nmatup.block(0,0,po-1,po-1);
-        Ptildedn = Nmatdn.block(0,0,po-1,po-1);
+        Ptildeup.noalias() = Nmatup.block(0,0,po-1,po-1);
+        Ptildedn.noalias() = Nmatdn.block(0,0,po-1,po-1);
       }
       else{ //general case with four blocks
         //upper left block
-        Ptildeup.block(0,0,ridx,ridx) = Nmatup.block(0,0,ridx,ridx);
-        Ptildedn.block(0,0,ridx,ridx) = Nmatdn.block(0,0,ridx,ridx);
+        Ptildeup.block(0,0,ridx,ridx).noalias() = Nmatup.block(0,0,ridx,ridx);
+        Ptildedn.block(0,0,ridx,ridx).noalias() = Nmatdn.block(0,0,ridx,ridx);
         //lower left block
-        Ptildeup.block(ridx,0,po-ridx-1,ridx) = Nmatup.block(ridx+1,0,po-ridx-1,ridx);
-        Ptildedn.block(ridx,0,po-ridx-1,ridx) = Nmatdn.block(ridx+1,0,po-ridx-1,ridx);
+        Ptildeup.block(ridx,0,po-ridx-1,ridx).noalias() = Nmatup.block(ridx+1,0,po-ridx-1,ridx);
+        Ptildedn.block(ridx,0,po-ridx-1,ridx).noalias() = Nmatdn.block(ridx+1,0,po-ridx-1,ridx);
         //upper right block
-        Ptildeup.block(0,ridx,ridx,po-ridx-1) = Nmatup.block(0,ridx+1,ridx,po-ridx-1);
-        Ptildedn.block(0,ridx,ridx,po-ridx-1) = Nmatdn.block(0,ridx+1,ridx,po-ridx-1);
+        Ptildeup.block(0,ridx,ridx,po-ridx-1).noalias() = Nmatup.block(0,ridx+1,ridx,po-ridx-1);
+        Ptildedn.block(0,ridx,ridx,po-ridx-1).noalias() = Nmatdn.block(0,ridx+1,ridx,po-ridx-1);
         //lower right block
-        Ptildeup.block(ridx,ridx,po-ridx-1,po-ridx-1) = Nmatup.block(ridx+1,ridx+1,po-ridx-1,po-ridx-1);
-        Ptildedn.block(ridx,ridx,po-ridx-1,po-ridx-1) = Nmatdn.block(ridx+1,ridx+1,po-ridx-1,po-ridx-1);
+        Ptildeup.block(ridx,ridx,po-ridx-1,po-ridx-1).noalias() = Nmatup.block(ridx+1,ridx+1,po-ridx-1,po-ridx-1);
+        Ptildedn.block(ridx,ridx,po-ridx-1,po-ridx-1).noalias() = Nmatdn.block(ridx+1,ridx+1,po-ridx-1,po-ridx-1);
       } 
     
       //update N matrices
       Nmatup.resize(po-1, po-1);
       Nmatdn.resize(po-1, po-1);
-      Nmatup = Eigen::MatrixXd::Zero(po-1, po-1);
-      Nmatdn = Eigen::MatrixXd::Zero(po-1, po-1);
-      Nmatup = Ptildeup - Qtildeup*Rtildeup.transpose()/Stildeup;
-      Nmatdn = Ptildedn - Qtildedn*Rtildedn.transpose()/Stildedn;
+      Nmatup.noalias() = Eigen::MatrixXd::Zero(po-1, po-1);
+      Nmatdn.noalias() = Eigen::MatrixXd::Zero(po-1, po-1);
+      Nmatup.noalias() = Ptildeup - Qtildeup*Rtildeup.transpose()/Stildeup;
+      Nmatdn.noalias() = Ptildedn - Qtildedn*Rtildedn.transpose()/Stildedn;
       
       #if DEBUG
       const fptype detninvup_n = Nmatup.inverse().determinant();
