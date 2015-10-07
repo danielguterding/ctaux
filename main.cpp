@@ -31,6 +31,8 @@ int main(int argc, char* argv[]){
     
     SolverParametersReader sreader(solverparameterinfilename);
     SolverParameters p = sreader.get_parameters();
+    //distribute number of measurement steps across all nodes
+    p.nsamplesmeasure = max(p.nsamplesmeasure/(long int) nnodes, (long int) 1);
     if(mpicomm.rank() == 0){cout << "Solver parameters successfully read." << endl;};
     
     ImaginaryTimeGreensFunctionReader gfreader;
