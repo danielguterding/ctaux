@@ -91,7 +91,9 @@ int main(int argc, char* argv[]){
     mpicomm.barrier();
   }
   else{
-    cout << "Wrong number of input arguments.\nUsage: ctaux [string solverparameterinfilename]" << endl;
+    if(mpicomm.rank() == 0){
+      cout << "Wrong number of input arguments.\nUsage: ctaux [string solverparameterinfilename]" << endl;
+    }
   }
   
   return 0;
