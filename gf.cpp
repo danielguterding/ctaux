@@ -32,3 +32,19 @@ fptype ImaginaryTimeGreensFunction::get_interpolated_value(const fptype tau){
   const fptype sign = pow(-1,p); //get the sign corresponding to fermionic antiperiodicity
   return sign*gfval;
 }
+
+LegendreCoefficientRepresentation::LegendreCoefficientRepresentation(){
+  
+}
+
+void LegendreCoefficientRepresentation::initialize(const int ncoeff, const fptype beta){
+  
+  this->ncoeff = ncoeff;
+  this->beta = beta;
+  this->coefficients = vector<fptype>(this->ncoeff, 0);
+}
+
+fptype LegendreCoefficientRepresentation::legendre_p(const int order, const fptype x){
+  
+  return boost::math::legendre_p<fptype>(order, x);
+}
