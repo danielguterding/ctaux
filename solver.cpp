@@ -370,7 +370,7 @@ void CTAUXSolver::construct_interacting_gf(){
   
   //fix coefficient of high-frequency tail to c1=1
   const fptype c1val = 1.0;
-  vector<fptype> coefficients_projeted_up(this->p.nlegendre, 0), coefficients_projeted_dn(this->p.nlegendre, 0);
+  vector<fptype> coefficients_projected_up(this->p.nlegendre, 0), coefficients_projected_dn(this->p.nlegendre, 0);
   fptype oldsum1up = 0, oldsum1dn = 0, oldsum2dn = 0, oldsum2up = 0;
   for(int i=0;i<this->p.nlegendre;i++){
     oldsum1up += outputgflegendreup_ptr->t(i, 1)*gfuplegendre[i];
@@ -379,14 +379,14 @@ void CTAUXSolver::construct_interacting_gf(){
     oldsum2dn += pow(outputgflegendredn_ptr->t(i, 1), 2);
   }
   for(int i=0;i<this->p.nlegendre;i++){
-    coefficients_projeted_up[i] = gfuplegendre[i] + (this->p.beta*c1val - oldsum1up)*outputgflegendreup_ptr->t(i, 1)/oldsum2up;
-    coefficients_projeted_dn[i] = gfdnlegendre[i] + (this->p.beta*c1val - oldsum1dn)*outputgflegendredn_ptr->t(i, 1)/oldsum2dn;
+    coefficients_projected_up[i] = gfuplegendre[i] + (this->p.beta*c1val - oldsum1up)*outputgflegendreup_ptr->t(i, 1)/oldsum2up;
+    coefficients_projected_dn[i] = gfdnlegendre[i] + (this->p.beta*c1val - oldsum1dn)*outputgflegendredn_ptr->t(i, 1)/oldsum2dn;
   }
   
   //this function takes care of writing measured Legendre coefficients back to output classes
   for(int i=0;i<this->p.nlegendre;i++){
-    outputgflegendreup_ptr->set_coefficient(i, coefficients_projeted_up[i]);
-    outputgflegendredn_ptr->set_coefficient(i, coefficients_projeted_dn[i]);
+    outputgflegendreup_ptr->set_coefficient(i, coefficients_projected_up[i]);
+    outputgflegendredn_ptr->set_coefficient(i, coefficients_projected_dn[i]);
   }
 }
 
