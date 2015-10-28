@@ -48,16 +48,3 @@ fptype LegendreCoefficientRepresentation::legendre_p(const int order, const fpty
   
   return boost::math::legendre_p<fptype>(order, x);
 }
-
-fptype LegendreCoefficientRepresentation::t(const int l, const int p){
-  
-  if(0 == (p+l)%2){ //for p+l even return zero
-    return 0;
-  }
-  else if(1 == p){ //use analytic simplification for case 1==p
-    return -2*sqrt(2.0*l+1.0);
-  }
-  else{
-    return pow(-1,p)*2*sqrt(2*l+1)*factorial(l+p-1)/(factorial(p-1)*factorial(l-p+1));
-  }
-}
