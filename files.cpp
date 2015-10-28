@@ -41,10 +41,6 @@ void SolverParametersReader::read(){
   
   getline(infilehandle, line); //read comment line and discard it
   getline(infilehandle, line);
-  this->p.nlegendre= (int)(boost::lexical_cast<fptype>(line));
-  
-  getline(infilehandle, line); //read comment line and discard it
-  getline(infilehandle, line);
   this->p.inputfilepathweiss_up = line;
   
   getline(infilehandle, line); //read comment line and discard it
@@ -58,14 +54,6 @@ void SolverParametersReader::read(){
   getline(infilehandle, line); //read comment line and discard it
   getline(infilehandle, line);
   this->p.outputfilepathgf_dn = line;
-  
-  getline(infilehandle, line); //read comment line and discard it
-  getline(infilehandle, line);
-  this->p.outputfilepathgf_up_legendre = line;
-  
-  getline(infilehandle, line); //read comment line and discard it
-  getline(infilehandle, line);
-  this->p.outputfilepathgf_dn_legendre = line;
   
   infilehandle.close();
 }
@@ -121,23 +109,6 @@ void ImaginaryTimeGreensFunctionWriter::write_gf(const string outfilename, Imagi
   for(int i=0;i<ntimes;i++){
     val = -fabs(gf.get_value(i));
     outfilehandle << boost::lexical_cast<string>(boost::format("%1.14e % 1.14e\n") % gf.get_time(i) % val);
-  }
-  
-  outfilehandle.close();
-}
-
-LegendreCoefficientRepresentationWriter::LegendreCoefficientRepresentationWriter(){
-  
-}
-
-void LegendreCoefficientRepresentationWriter::write_coefficients(string outfilename, LegendreCoefficientRepresentation& legendre){
-  
-  boost::filesystem::path outfilepath(outfilename);
-  boost::filesystem::ofstream outfilehandle(outfilepath);
-  
-  outfilehandle << "#idx, coefficient value\n";
-  for(int i=0;i<legendre.get_ncoefficients();i++){
-    outfilehandle << boost::lexical_cast<string>(boost::format("%03i % 1.14e\n") % i % legendre.get_coefficient(i));
   }
   
   outfilehandle.close();

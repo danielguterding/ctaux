@@ -19,8 +19,7 @@ using namespace std;
 struct SolverParameters{
   fptype beta, K, U;
   long int nsampleswarmup, nsamplesmeasure, nbins;
-  int nlegendre;
-  string inputfilepathweiss_up, inputfilepathweiss_dn, outputfilepathgf_up, outputfilepathgf_dn, outputfilepathgf_up_legendre, outputfilepathgf_dn_legendre;
+  string inputfilepathweiss_up, inputfilepathweiss_dn, outputfilepathgf_up, outputfilepathgf_dn;
 };
 
 class SolverParametersReader{
@@ -47,14 +46,6 @@ class ImaginaryTimeGreensFunctionWriter{
     void write_gf(const string outfilename, ImaginaryTimeGreensFunction& gf);
   private:
     
-};
-
-class LegendreCoefficientRepresentationWriter{
-  public:
-    LegendreCoefficientRepresentationWriter();
-    void write_coefficients(string outfilename, LegendreCoefficientRepresentation& legendre);
-  private:
-  
 };
 
 #endif 

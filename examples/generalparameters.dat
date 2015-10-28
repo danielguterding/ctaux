@@ -1,26 +1,20 @@
 #beta in inverse electron volts
-2
+40
 #K parameter that controls expansion order
 1
 #Hubbard U in eV
-4.5
+2
 #warmup phase: number of MC samples, e.g. 1.0e4
-1.0e6
+1.0e4
 #measure phase: number of MC samples, e.g. 1.5e7
-1.0e5
+1.5e7
 #number of bins for the imaginary time measurement process, e.g. 1.3e5
-1.0e3
-#number of coefficients for Legendre polynomial measurement
-25
-#input file path for the Weiss field in imaginary time, spin up
-examples/bethegf_time_bandwidth_2_8192tau_beta2.dat
-#input file path for the Weiss field in imaginary time, spin dn
-examples/bethegf_time_bandwidth_2_8192tau_beta2.dat
-#output file path for output GF in imaginary time, spin up
-gfup_beta2_U4p5.dat
-#output file path for output GF in imaginary time, spin dn
-gfdn_beta2_U4p5.dat
-#output file path for output GF in Legendre coefficients, spin up
-gfup_beta2_U4p5_legendre.dat
-#output file path for output GF in Legendre coefficients, spin dn
-gfdn_beta2_U4p5_legendre.dat
+1.3e5
+#input file path with the Weiss field in imaginary time, spin up
+examples/bethegf_time_bandwidth_2_10e5tau.dat
+#input file path with the Weiss field in imaginary time, spin dn
+examples/bethegf_time_bandwidth_2_10e5tau.dat
+#output file path with output GF in imaginary time, spin up
+testup.dat
+#output file path with output GF in imaginary time, spin dn
+testdn.dat

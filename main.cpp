@@ -42,8 +42,7 @@ int main(int argc, char* argv[]){
     if(mpicomm.rank() == 0){cout << "Input Weiss field successfully read." << endl;};
     
     ImaginaryTimeGreensFunction outputgf_up, outputgf_dn;
-    LegendreCoefficientRepresentation outputgf_legendre_up, outputgf_legendre_dn;
-    CTAUXSolver solver(p, weissfield_up, weissfield_dn, outputgf_up, outputgf_dn, outputgf_legendre_up, outputgf_legendre_dn, noderank);
+    CTAUXSolver solver(p, weissfield_up, weissfield_dn, outputgf_up, outputgf_dn, noderank);
     if(mpicomm.rank() == 0){cout << "Impurity solver successfully started." << endl;};
     
     solver.do_warmup();
@@ -56,23 +55,15 @@ int main(int argc, char* argv[]){
     //collect Greens function data
     vector<fptype> gflocal_up = outputgf_up.get_gf();
     vector<fptype> gflocal_dn = outputgf_dn.get_gf();
-    vector<fptype> legendrelocal_up = outputgf_legendre_up.get_coefficients();
-    vector<fptype> legendrelocal_dn = outputgf_legendre_dn.get_coefficients();
     std::transform(gflocal_up.begin(), gflocal_up.end(), gflocal_up.begin(), std::bind2nd(std::divides<fptype>(), fptype(nnodes))); //divide by number of nodes before gather operation to ensure averaging
-    std::transform(gflocal_dn.begin(), gflocal_dn.end(), gflocal_dn.begin(), std::bind2nd(std::divides<fptype>(), fptype(nnodes))); 
-    std::transform(legendrelocal_up.begin(), legendrelocal_up.end(), legendrelocal_up.begin(), std::bind2nd(std::divides<fptype>(), fptype(nnodes)));
-    std::transform(legendrelocal_dn.begin(), legendrelocal_dn.end(), legendrelocal_dn.begin(), std::bind2nd(std::divides<fptype>(), fptype(nnodes)));
-    vector<fptype> gfaveraged_up(0), gfaveraged_dn(0), legendreaveraged_up(0), legendreaveraged_dn(0);
+    std::transform(gflocal_dn.begin(), gflocal_dn.end(), gflocal_dn.begin(), std::bind2nd(std::divides<fptype>(), fptype(nnodes)));    
+    vector<fptype> gfaveraged_up(0), gfaveraged_dn(0);
     mpi::reduce(mpicomm, gflocal_up, gfaveraged_up, elementwise_add<fptype>(), 0);
     mpi::reduce(mpicomm, gflocal_dn, gfaveraged_dn, elementwise_add<fptype>(), 0);    
-    mpi::reduce(mpicomm, legendrelocal_up, legendreaveraged_up, elementwise_add<fptype>(), 0);   
-    mpi::reduce(mpicomm, legendrelocal_dn, legendreaveraged_dn, elementwise_add<fptype>(), 0);   
     mpicomm.barrier();
     if(mpicomm.rank() == 0){
       outputgf_up.set_gf(gfaveraged_up);
       outputgf_dn.set_gf(gfaveraged_dn);
-      outputgf_legendre_up.set_coefficients(legendreaveraged_up);
-      outputgf_legendre_dn.set_coefficients(legendreaveraged_dn);
     }
     
     if(mpicomm.rank() == 0){cout << "Constructed interacting Green's function from binned data." << endl;};
@@ -94,9 +85,6 @@ int main(int argc, char* argv[]){
       ImaginaryTimeGreensFunctionWriter gfwriter;
       gfwriter.write_gf(p.outputfilepathgf_up, outputgf_up);
       gfwriter.write_gf(p.outputfilepathgf_dn, outputgf_dn);
-      LegendreCoefficientRepresentationWriter coeffwriter;
-      coeffwriter.write_coefficients(p.outputfilepathgf_up_legendre, outputgf_legendre_up);
-      coeffwriter.write_coefficients(p.outputfilepathgf_dn_legendre, outputgf_legendre_dn);
       cout << "Output Green's function successfully written." << endl;
       cout << "Program finished." << endl;
     }
