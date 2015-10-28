@@ -39,7 +39,6 @@ class LegendreCoefficientRepresentation{
     int get_ncoefficients(){return ncoeff;};
     fptype x(const fptype tau){return 2*tau/beta - 1;};
     fptype t(const int l, const int p);
-    void calculate_imaginary_time_gf(ImaginaryTimeGreensFunction& gf);
   private:
     int ncoeff;
     fptype beta;

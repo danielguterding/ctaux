@@ -61,17 +61,3 @@ fptype LegendreCoefficientRepresentation::t(const int l, const int p){
     return pow(-1,p)*2*sqrt(2*l+1)*factorial(l+p-1)/(factorial(p-1)*factorial(l-p+1));
   }
 }
-
-void LegendreCoefficientRepresentation::calculate_imaginary_time_gf(ImaginaryTimeGreensFunction& gf){
-  
-  const int ntimes = gf.get_ntimes();
-  for(int i=0;i<ntimes;i++){
-    const fptype tau = gf.get_time(i);
-    const fptype xval = x(tau);
-    fptype gfval = 0;
-    for(int j=0;j<ncoeff;j++){
-      gfval += sqrt(2.0*j+1.0)/beta*legendre_p(j, xval)*coefficients[j];
-    }
-    gf.set_value(i, gfval);
-  }
-}
