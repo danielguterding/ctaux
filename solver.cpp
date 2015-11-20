@@ -37,20 +37,23 @@ fptype CTAUXConfiguration::get_time(const uint idx){
   return timepoints[idx];
 }
 
-CTAUXSolver::CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weissfield_up, ImaginaryTimeGreensFunction& weissfield_dn, ImaginaryTimeGreensFunction& outputgf_up, ImaginaryTimeGreensFunction& outputgf_dn, const uint noderank){
+CTAUXSolver::CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weissfield_up, ImaginaryTimeGreensFunction& weissfield_dn, ImaginaryTimeGreensFunction& outputgf_up, ImaginaryTimeGreensFunction& outputgf_dn, LegendreCoefficientRepresentation& outputgf_legendre_up, LegendreCoefficientRepresentation& outputgf_legendre_dn, const uint noderank){
   
   this->p = p;
   this->wfup_ptr = &weissfield_up;
   this->wfdn_ptr = &weissfield_dn;
   this->outputgfup_ptr = &outputgf_up;
   this->outputgfdn_ptr = &outputgf_dn;
+  this->outputgflegendreup_ptr = &outputgf_legendre_up;
+  this->outputgflegendredn_ptr = &outputgf_legendre_dn;
+  
   this->noderank = noderank;
   
   //initialize outputgf with beta and number of time slices, i.e. bins
   this->outputgfup_ptr->generate_timeaxis(this->p.beta, this->p.nbins);
   this->outputgfdn_ptr->generate_timeaxis(this->p.beta, this->p.nbins);
   
-  //initialize bins for gf measurement
+  //initialize bins for conventional gf measurement
   this->binwidth = this->p.beta/fptype(this->p.nbins);
   this->binmids.resize(this->p.nbins);
   this->gfupbins.resize(this->p.nbins);
@@ -60,6 +63,16 @@ CTAUXSolver::CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weiss
     this->gfupbins[i] = 0;
     this->gfdnbins[i] = 0;
   }
+  
+  //initialize Legendre coefficient bins
+  this->gfuplegendre.resize(this->p.nlegendre);
+  this->gfdnlegendre.resize(this->p.nlegendre);
+  for(int i=0;i<this->p.nlegendre;i++){
+    gfuplegendre[i] = 0;
+    gfdnlegendre[i] = 0;
+  }
+  this->outputgflegendreup_ptr->initialize(this->p.nlegendre, this->p.beta);
+  this->outputgflegendredn_ptr->initialize(this->p.nlegendre, this->p.beta);
   
   this->gammaparameter = acosh(1 + p.beta*p.U/2.0/p.K);
   this->update_accepted = 0;
@@ -319,10 +332,22 @@ void CTAUXSolver::measure_gf(){
   Eigen::VectorXd Sup = Mup*gfup;
   Eigen::VectorXd Sdn = Mdn*gfdn;
   
+  //conventional binning measurement
   for(int i=0;i<po;i++){
     const int binidx = floor(config_ptr->get_time(i)/binwidth);
     gfupbins[binidx] += Sup(i)/fptype(this->p.nsamplesmeasure);
     gfdnbins[binidx] += Sdn(i)/fptype(this->p.nsamplesmeasure);
+  }
+  
+  //Legendre coefficient measurement
+  for(int i=0;i<this->p.nlegendre;i++){
+    const fptype prefactor = sqrt(2.0*i+1.0)/fptype(this->p.nsamplesmeasure);
+    Eigen::VectorXd lvec = Eigen::VectorXd::Zero(po);
+    for(int j=0;j<po;j++){
+      lvec(j) = outputgflegendreup_ptr->legendre_p(i, outputgflegendreup_ptr->x(config_ptr->get_time(j)));
+    }
+    gfuplegendre[i] += prefactor*lvec.dot(Sup);
+    gfdnlegendre[i] += prefactor*lvec.dot(Sdn);
   }
 }
 
@@ -341,6 +366,33 @@ void CTAUXSolver::construct_interacting_gf(){
     valdn += wfdn_ptr->get_interpolated_value(tau);
     outputgfup_ptr->set_value(i, valup);
     outputgfdn_ptr->set_value(i, valdn);
+  }
+  
+  //fix coefficient of high-frequency tail to c1=1
+  /*const fptype c1val = 1.0;
+  vector<fptype> coefficients_projected_up(this->p.nlegendre, 0), coefficients_projected_dn(this->p.nlegendre, 0);
+  fptype oldsum1up = 0, oldsum1dn = 0, oldsum2dn = 0, oldsum2up = 0;
+  for(int i=0;i<this->p.nlegendre;i++){
+    oldsum1up += outputgflegendreup_ptr->t(i, 1)*gfuplegendre[i];
+    oldsum1dn += outputgflegendredn_ptr->t(i, 1)*gfdnlegendre[i];
+    oldsum2up += pow(outputgflegendreup_ptr->t(i, 1), 2);
+    oldsum2dn += pow(outputgflegendredn_ptr->t(i, 1), 2);
+  }
+  for(int i=0;i<this->p.nlegendre;i++){
+    coefficients_projected_up[i] = gfuplegendre[i] + (this->p.beta*c1val - oldsum1up)*outputgflegendreup_ptr->t(i, 1)/oldsum2up;
+    coefficients_projected_dn[i] = gfdnlegendre[i] + (this->p.beta*c1val - oldsum1dn)*outputgflegendredn_ptr->t(i, 1)/oldsum2dn;
+  }
+  
+  //this function takes care of writing measured Legendre coefficients back to output classes
+  for(int i=0;i<this->p.nlegendre;i++){
+    outputgflegendreup_ptr->set_coefficient(i, coefficients_projected_up[i]);
+    outputgflegendredn_ptr->set_coefficient(i, coefficients_projected_dn[i]);
+  }*/
+  
+  //this function takes care of writing measured Legendre coefficients back to output classes
+  for(int i=0;i<this->p.nlegendre;i++){
+    outputgflegendreup_ptr->set_coefficient(i, gfuplegendre[i]);
+    outputgflegendredn_ptr->set_coefficient(i, gfdnlegendre[i]);
   }
 }
 

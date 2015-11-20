@@ -32,3 +32,49 @@ fptype ImaginaryTimeGreensFunction::get_interpolated_value(const fptype tau){
   const fptype sign = pow(-1,p); //get the sign corresponding to fermionic antiperiodicity
   return sign*gfval;
 }
+
+LegendreCoefficientRepresentation::LegendreCoefficientRepresentation(){
+  
+}
+
+void LegendreCoefficientRepresentation::initialize(const int ncoeff, const fptype beta){
+  
+  this->ncoeff = ncoeff;
+  this->beta = beta;
+  this->coefficients = vector<fptype>(this->ncoeff, 0);
+}
+
+fptype LegendreCoefficientRepresentation::legendre_p(const int order, const fptype x){
+  
+  return boost::math::legendre_p<fptype>(order, x);
+}
+
+fptype LegendreCoefficientRepresentation::t(const int l, const int p){
+  
+  if(0 == (p+l)%2){ //for p+l even return zero
+    return 0;
+  }
+  else if(1 == p){ //use analytic simplification for case 1==p
+    return -2*sqrt(2.0*l+1.0);
+  }
+  else{
+    return pow(-1,p)*2*sqrt(2*l+1)*factorial(l+p-1)/(factorial(p-1)*factorial(l-p+1));
+  }
+}
+
+void LegendreCoefficientRepresentation::calculate_imaginary_time_gf_from_sigmag(ImaginaryTimeGreensFunction& g0, ImaginaryTimeGreensFunction& sigmag){
+  
+  const int ntimes = sigmag.get_ntimes();
+  for(int i=0;i<ntimes;i++){
+    const fptype tau = sigmag.get_time(i);
+    const fptype xval = this->x(tau);
+    fptype gfval = 0;
+    const fptype g0val = g0.get_interpolated_value(tau);
+    //cout << g0val << endl;
+    for(int j=0;j<ncoeff;j++){
+      gfval += sqrt(2.0*j+1.0)/beta*legendre_p(j, xval)*coefficients[j];
+    }
+    gfval = g0val*(1.0+gfval);
+    sigmag.set_value(i, gfval);
+  }
+}

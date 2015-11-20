@@ -24,7 +24,7 @@ class CTAUXConfiguration{
 
 class CTAUXSolver{
   public:
-    CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weissfield_up, ImaginaryTimeGreensFunction& weissfield_dn, ImaginaryTimeGreensFunction& outputgf_up, ImaginaryTimeGreensFunction& outputgf_dn, const uint noderank);
+    CTAUXSolver(SolverParameters& p, ImaginaryTimeGreensFunction& weissfield_up, ImaginaryTimeGreensFunction& weissfield_dn, ImaginaryTimeGreensFunction& outputgf_up, ImaginaryTimeGreensFunction& outputgf_dn, LegendreCoefficientRepresentation& outputgf_legendre_up, LegendreCoefficientRepresentation& outputgf_legendre_dn, const uint noderank);
     ~CTAUXSolver();
     void do_warmup();
     void do_measurement();
@@ -42,17 +42,18 @@ class CTAUXSolver{
     #if DEBUG 
     void calculate_Ninverse();
     #endif
-    uint noderank;
     fptype egamma(int physicalspin, int auxiliaryspin);
     fptype gammaparameter;
+    uint noderank;
     SolverParameters p;
     ImaginaryTimeGreensFunction *wfup_ptr, *wfdn_ptr, *outputgfup_ptr, *outputgfdn_ptr;
+    LegendreCoefficientRepresentation *outputgflegendreup_ptr, *outputgflegendredn_ptr;
     CTAUXConfiguration *config_ptr;
     RNG *rng_ptr;
     Eigen::MatrixXd Nmatup, Nmatdn;
     fptype binwidth;
     vector<fptype> binmids;
-    vector<fptype> gfupbins, gfdnbins;
+    vector<fptype> gfupbins, gfdnbins, gfuplegendre, gfdnlegendre;
     fptype average_po, acceptance_ratio;
     bool update_accepted;
 };

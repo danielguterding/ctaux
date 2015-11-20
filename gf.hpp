@@ -1,5 +1,6 @@
 //gf.hpp
 #include <vector>
+#include <boost/math/special_functions/legendre.hpp>
 
 #include "typedefs.hpp"
 
@@ -24,6 +25,26 @@ class ImaginaryTimeGreensFunction{
     vector<fptype> gf;
     int ntimes;
     fptype beta, dtau;
+};
+
+class LegendreCoefficientRepresentation{
+  public:
+    LegendreCoefficientRepresentation();
+    void initialize(const int ncoeff, const fptype beta);
+    fptype get_coefficient(const int idx){return coefficients[idx];};
+    void set_coefficient(const int idx, const fptype value){coefficients[idx] = value;};
+    fptype legendre_p(const int order, const fptype x);
+    vector<fptype> get_coefficients(){return coefficients;};
+    void set_coefficients(const vector<fptype> coefficients){this->coefficients = coefficients;};
+    int get_ncoefficients(){return ncoeff;};
+    fptype x(const fptype tau){return 2*tau/beta - 1;};
+    fptype t(const int l, const int p);
+    void calculate_imaginary_time_gf_from_sigmag(ImaginaryTimeGreensFunction& g0, ImaginaryTimeGreensFunction& sigmag);
+  private:
+    int ncoeff;
+    fptype beta;
+    vector<fptype> coefficients;
+    long long int factorial(long long int n){return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;};
 };
 
 #endif
