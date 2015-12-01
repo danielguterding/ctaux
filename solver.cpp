@@ -344,7 +344,6 @@ void CTAUXSolver::measure_gf(){
     const int binidx = floor(modtaurem/binwidth);
     gfupbins[binidx] += prefactor*Sup(i)/fptype(this->p.nsamplesmeasure);
     gfdnbins[binidx] += prefactor*Sdn(i)/fptype(this->p.nsamplesmeasure);
-    cout << modtau << " "  << modtaurem << " " << prefactor << endl;
   }
   
   //Legendre coefficient measurement
