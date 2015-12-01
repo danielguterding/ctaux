@@ -70,7 +70,6 @@ void LegendreCoefficientRepresentation::calculate_imaginary_time_gf_from_sigmag(
     const fptype xval = this->x(tau);
     fptype gfval = 0;
     const fptype g0val = g0.get_interpolated_value(tau);
-    //cout << g0val << endl;
     for(int j=0;j<ncoeff;j++){
       gfval += sqrt(2.0*j+1.0)/beta*legendre_p(j, xval)*coefficients[j];
     }
