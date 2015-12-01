@@ -327,6 +327,7 @@ void CTAUXSolver::measure_gf(){
   Eigen::VectorXd gfup = Eigen::VectorXd::Zero(po);
   Eigen::VectorXd gfdn = Eigen::VectorXd::Zero(po);
   for(int i=0;i<po;i++){
+    //modify tau so that reference point is sampled
     const fptype modtau = config_ptr->get_time(i) + randomtau;
     gfup(i) = wfup_ptr->get_interpolated_value(modtau);
     gfdn(i) = wfdn_ptr->get_interpolated_value(modtau);
@@ -339,7 +340,7 @@ void CTAUXSolver::measure_gf(){
     //modify tau so that reference point is sampled
     const fptype modtau = config_ptr->get_time(i) + randomtau;
     fptype modtaurem = fmod(modtau, this->p.beta);
-    const int prefactor = (modtau > this->p.beta) ? -1 : 1;
+    const int prefactor = (modtau > this->p.beta) ? -1 : 1; //we add a random number 0...beta, so modtau can be 0...2*beta
     //bin measured data
     const int binidx = floor(modtaurem/binwidth);
     gfupbins[binidx] += prefactor*Sup(i)/fptype(this->p.nsamplesmeasure);
