@@ -339,7 +339,7 @@ void CTAUXSolver::measure_gf(){
   for(int i=0;i<po;i++){
     //modify tau so that reference point is sampled
     const fptype modtau = config_ptr->get_time(i) + randomtau;
-    fptype modtaurem = fmod(modtau, this->p.beta);
+    const fptype modtaurem = fmod(modtau, this->p.beta);
     const int prefactor = (modtau > this->p.beta) ? -1 : 1; //we add a random number 0...beta, so modtau can be 0...2*beta
     //bin measured data
     const int binidx = floor(modtaurem/binwidth);
@@ -352,7 +352,11 @@ void CTAUXSolver::measure_gf(){
     const fptype prefactor = sqrt(2.0*i+1.0)/fptype(this->p.nsamplesmeasure);
     Eigen::VectorXd lvec = Eigen::VectorXd::Zero(po);
     for(int j=0;j<po;j++){
-      lvec(j) = outputgflegendreup_ptr->legendre_p(i, outputgflegendreup_ptr->x(config_ptr->get_time(j)));
+      //modify tau so that reference point is sampled
+      const fptype modtau = config_ptr->get_time(j) + randomtau;
+      const fptype modtaurem = fmod(modtau, this->p.beta);
+      const int prefacgf = (modtau > this->p.beta) ? -1 : 1; //we add a random number 0...beta, so modtau can be 0...2*beta
+      lvec(j) = prefacgf*outputgflegendreup_ptr->legendre_p(i, outputgflegendreup_ptr->x(modtaurem));
     }
     gfuplegendre[i] += prefactor*lvec.dot(Sup);
     gfdnlegendre[i] += prefactor*lvec.dot(Sdn);
