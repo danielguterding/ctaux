@@ -312,6 +312,7 @@ void CTAUXSolver::remove_update(){
 void CTAUXSolver::measure_gf(){
   
   const int po = config_ptr->get_perturbation_order();
+  const fptype randomtau = this->p.beta*rng_ptr->get_value();
  
   Eigen::VectorXd egup = Eigen::VectorXd::Zero(po);
   Eigen::VectorXd egdn = Eigen::VectorXd::Zero(po);
@@ -326,17 +327,24 @@ void CTAUXSolver::measure_gf(){
   Eigen::VectorXd gfup = Eigen::VectorXd::Zero(po);
   Eigen::VectorXd gfdn = Eigen::VectorXd::Zero(po);
   for(int i=0;i<po;i++){
-    gfup(i) = wfup_ptr->get_interpolated_value(config_ptr->get_time(i));
-    gfdn(i) = wfdn_ptr->get_interpolated_value(config_ptr->get_time(i));
+    const fptype modtau = config_ptr->get_time(i) + randomtau;
+    gfup(i) = wfup_ptr->get_interpolated_value(modtau);
+    gfdn(i) = wfdn_ptr->get_interpolated_value(modtau);
   }
   Eigen::VectorXd Sup = Mup*gfup;
   Eigen::VectorXd Sdn = Mdn*gfdn;
   
   //conventional binning measurement
   for(int i=0;i<po;i++){
-    const int binidx = floor(config_ptr->get_time(i)/binwidth);
-    gfupbins[binidx] += Sup(i)/fptype(this->p.nsamplesmeasure);
-    gfdnbins[binidx] += Sdn(i)/fptype(this->p.nsamplesmeasure);
+    //modify tau so that reference point is sampled
+    const fptype modtau = config_ptr->get_time(i) + randomtau;
+    fptype modtaurem = fmod(modtau, this->p.beta);
+    const int prefactor = (modtau > this->p.beta) ? -1 : 1;
+    //bin measured data
+    const int binidx = floor(modtaurem/binwidth);
+    gfupbins[binidx] += prefactor*Sup(i)/fptype(this->p.nsamplesmeasure);
+    gfdnbins[binidx] += prefactor*Sdn(i)/fptype(this->p.nsamplesmeasure);
+    cout << modtau << " "  << modtaurem << " " << prefactor << endl;
   }
   
   //Legendre coefficient measurement
