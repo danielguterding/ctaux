@@ -1,5 +1,5 @@
 #beta in inverse electron volts
-2
+5
 #K parameter that controls expansion order
 1
 #Hubbard U in eV
@@ -13,9 +13,9 @@
 #number of coefficients for Legendre polynomial measurement
 25
 #input file path for the Weiss field in imaginary time, spin up
-examples/bethegf_time_bandwidth_2_8192tau_beta2.dat
+examples/bethegf_time_bandwidth_2_10e5tau_beta5.dat
 #input file path for the Weiss field in imaginary time, spin dn
-examples/bethegf_time_bandwidth_2_8192tau_beta2.dat
+examples/bethegf_time_bandwidth_2_10e5tau_beta5.dat
 #output file path for output GF in imaginary time, spin up
 gfup_beta2_U4p5.dat
 #output file path for output GF in imaginary time, spin dn
