@@ -51,9 +51,9 @@ def main():
     tau, gf_time, beta = transform_gf(matsubarafreq, gf_frequency, ntau)
     write_gf(outfilename, tau, gf_time)
     
-    print "Beta is: %f" % beta
-    print "Data converted successfully."
+    print("Beta is: %f" % beta)
+    print("Data converted successfully.")
   else:
-    print "Wrong number of input arguments. Please supply input Green's function, output file name and number of intended imaginary time points."
+    print("Wrong number of input arguments. Please supply input Green's function, output file name and number of intended imaginary time points.")
   
 main()

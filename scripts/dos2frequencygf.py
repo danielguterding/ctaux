@@ -24,25 +24,25 @@ def main():
       splitline = l.strip().split()
       energies[i] = splitline[0]
       for j,d in enumerate(splitline[1:]):
-	dos[j, i] = d
-   
+        dos[j, i] = d
+
     matsubarafrequencies = np.array([(2.*n+1.)*np.pi/beta for n in range(nmatsubara)])
     orbitalgf = np.zeros((norbitals, nmatsubara), dtype=complex)
     for i,orbitaldos in enumerate(dos):
       for j,wn in enumerate(matsubarafrequencies):
-	complexintegrand = orbitaldos/(1j*wn - energies)
-	realintegrand = np.real(complexintegrand)
-	imagintegrand = np.imag(complexintegrand)
-	orbitalgf[i, j] = np.trapz(y=realintegrand, x=energies) + 1j*np.trapz(y=imagintegrand, x=energies)
+        complexintegrand = orbitaldos/(1j*wn - energies)
+        realintegrand = np.real(complexintegrand)
+        imagintegrand = np.imag(complexintegrand)
+        orbitalgf[i, j] = np.trapz(y=realintegrand, x=energies) + 1j*np.trapz(y=imagintegrand, x=energies)
     
     for i,orbitalgf in enumerate(orbitalgf):
       outfilenamethisorb = outfilename + '_%0i' % i
       outfilehandle = open(outfilenamethisorb, 'w')
       outfilehandle.write('#matsubara frequencies in eV, real part of Greens function, imag part of Greens function\n')
       for wn,gf in zip(matsubarafrequencies, orbitalgf):
-	outfilehandle.write('%1.14f % 1.14f % 1.14f\n' % (wn, gf.real, gf.imag))
+        outfilehandle.write('%1.14f % 1.14f % 1.14f\n' % (wn, gf.real, gf.imag))
       outfilehandle.close() 
   else:
-    print 'Wrong number of input arguments. Please supply input DOS file, output file name, desired number of Matsubara frequencies and desired inverse Temperature beta in inverse eV.'
+    print('Wrong number of input arguments. Please supply input DOS file, output file name, desired number of Matsubara frequencies and desired inverse Temperature beta in inverse eV.')
   
 main()

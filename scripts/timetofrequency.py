@@ -49,9 +49,9 @@ def main():
     matsubarafreq, gf_frequency, beta = transform_gf(taupoints, gf_time, nfreq)
     write_gf(outfilename, matsubarafreq, gf_frequency)
     
-    print "Beta is: %f" % beta
-    print "Data converted successfully."
+    print("Beta is: %f" % beta)
+    print("Data converted successfully.")
   else:
-    print "Wrong number of input arguments. Please supply input Green's function, output file name and number of intended imaginary frequencies."
+    print("Wrong number of input arguments. Please supply input Green's function, output file name and number of intended imaginary frequencies.")
   
 main()
